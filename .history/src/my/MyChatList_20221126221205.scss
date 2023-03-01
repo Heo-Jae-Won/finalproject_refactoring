@@ -1,0 +1,19 @@
+.list-group-item.click{
+    background-color: #eee;
+    width:200px;
+    overflow:hidden;
+    color: rgb(216, 131, 20);
+    text-overflow:ellipsis;
+    white-space:nowrap;
+    display:inline-block;
+  }
+    
+  
+  .list-group-item.non-click {
+    width:200px;
+    overflow:hidden;
+    text-overflow:ellipsis;
+    white-space:nowrap;
+    display:inline-block;
+    margin-bottom: 0;
+  }
