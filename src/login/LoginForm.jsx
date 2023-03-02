@@ -1,12 +1,11 @@
 import { Grid, TextField } from '@material-ui/core';
-import axios from 'axios';
 import React, { useState } from 'react';
 import { Button, Card, Form, Row } from 'react-bootstrap';
 import { Link, useNavigate } from 'react-router-dom';
-import Swal from 'sweetalert2';
+import { swalWarnExistId, swalWarnExistPassword } from '../util/swal/swal.login.util';
 
 const LoginForm = () => {
-  const navigate=useNavigate();
+  const navigate = useNavigate();
   const [form, setForm] = useState({
     uid: '',
     upass: '',
@@ -20,7 +19,7 @@ const LoginForm = () => {
       [e.target.name]: e.target.value
     }))
   }
- 
+
 
 
 
@@ -29,16 +28,11 @@ const LoginForm = () => {
     e.preventDefault();
 
     try {
-      const result = await axios.post('/api/user/login', form);
+      const result = await onLogin(form);
 
       //id x
       if (result.data === 0) {
-        Swal.fire({
-          text: "아이디가 없습니다",
-          icon: 'warning',
-          confirmButtonColor: '#3085d6',
-          cancelButtonColor: '#d33',
-        })
+        swalWarnExistId();
         setForm({
           ...form,
           uid: ''
@@ -46,12 +40,7 @@ const LoginForm = () => {
 
         //password incorrect
       } else if (result.data === 3) {
-        Swal.fire({
-          text: "비밀번호가 올바르지 않습니다",
-          icon: 'warning',
-          confirmButtonColor: '#3085d6',
-          cancelButtonColor: '#d33',
-        })
+        swalWarnExistPassword();
         setForm({
           ...form,
           upass: ''
@@ -61,18 +50,10 @@ const LoginForm = () => {
       } else if (result.data === 1) {
 
         //move to restore
-        Swal.fire({
-          text: "이미 탈퇴한 회원입니다. 아이디 복원 페이지로 이동하시겠습니까?",
-          icon: 'info',
-          showCancelButton: true,
-          confirmButtonColor: '#3085d6',
-          cancelButtonColor: '#d33',
-          confirmButtonText: '이동',
-          cancelButtonText: '취소'
-        }).then(async (result) => {
-          if (result.isConfirmed) {
+        swalQueryRestoreId().then(async (result) => {
+          if (result.isConfirmed)
             navigate(`/login/restore/${form.uid}`);
-          }
+
         })
 
         //login success
@@ -82,15 +63,8 @@ const LoginForm = () => {
       }
 
     } catch (e) {
-      if (e) {
-        console.log(e);
-        Swal.fire({
-          text: "예상치 못한 오류가 발생하였습니다",
-          icon: 'error',
-          confirmButtonColor: '#3085d6',
-          cancelButtonColor: '#d33',
-        })
-      }
+      swalError();
+
     }
 
   }

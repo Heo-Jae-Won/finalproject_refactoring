@@ -23,7 +23,7 @@ const navigate=useNavigate();
 
   const fetchEventRead = async () => {
     setLoading(true);
-    const result = await axios.get(`/api/event/${ecode}`)
+    const result = await getEventRead(ecode);
     setEventRead(result.data);
     setLoading(false);
   }

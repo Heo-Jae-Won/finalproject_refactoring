@@ -1,6 +1,5 @@
 import { Card, Grid, TextField } from '@material-ui/core';
 import { Rating } from '@mui/material';
-import axios from 'axios';
 import { addDoc, collection, getFirestore, limit, onSnapshot, query, where } from 'firebase/firestore';
 import React, { useContext, useEffect, useState } from 'react';
 import { Button, ButtonGroup, Form, Row, Spinner } from 'react-bootstrap';
@@ -10,10 +9,6 @@ import { app } from '../fireStore';
 import { getPboardRead, onPboardDelete, onPboardUpdate } from '../util/axios/pboard';
 import { swalError, swalQueryDelete, swalSuccessUpdate } from '../util/swal/swal.basic.util';
 import { swalAlertFileUploadSizeError, swalBoardDelete } from '../util/swal/swal.pboard.util';
-
-
-
-
 
 const PboardRead = () => {
   const { pcode } = useParams();
@@ -45,7 +40,7 @@ const PboardRead = () => {
 
     //pcode o ㅡ>rendering on || pcode x ㅡ>move to PboardList
     try {
-      const result = await getPboardRead();
+      const result = await getPboardRead(pcode);
 
       const q = query(
         collection(db, `chatroom`),

@@ -3,6 +3,7 @@ import axios from 'axios';
 import React, { useState } from 'react';
 import { Alert, Button, Card, Form, Row } from 'react-bootstrap';
 import Swal from 'sweetalert2'
+import { FindId } from '../util/axios/login';
 import { swalError } from '../util/swal/swal.basic.util';
 import { swalWarnEmailInput } from '../util/swal/swal.my.util';
 
@@ -29,7 +30,7 @@ const LoginFindId = () => {
     }
 
     try {
-      const result = await axios.get(`/api/user/id/${form.uemail}/${form.uname}`);
+      const result = await FindId(form.uemail,form.uname);
 
       if (result.data === '') {
         setForm({

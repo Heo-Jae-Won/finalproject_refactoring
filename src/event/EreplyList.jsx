@@ -1,11 +1,11 @@
-import axios from 'axios';
 import React, { useContext, useEffect, useState } from 'react';
 import { Button } from 'react-bootstrap';
 import Form from 'react-bootstrap/Form';
 import Pagination from "react-js-pagination";
 import { UserContext } from '../context/UserContext';
 import '../Pagination.css';
-import Swal from 'sweetalert2'
+import { deleteReply, getReplyList, insertReply } from '../util/axios/event';
+import { swalError, swalQueryDelete, swalSuccessDelete } from '../util/swal/swal.basic.util';
 
 const EreplyList = ({ ecode }) => {
   const { loginUser } = useContext(UserContext);
@@ -16,7 +16,7 @@ const EreplyList = ({ ecode }) => {
   const num = 6;
 
   const fetchEreply = async () => {
-    const result = await axios.get(`/api/ereply/list?ecode=${ecode}&page=${page}&num=${num}`);
+    const result = await getReplyList(ecode, page, num);
     setList(result.data.list);
     setTotal(result.data.total);
   }
@@ -43,49 +43,36 @@ const EreplyList = ({ ecode }) => {
         setErcontent(e.target.value);
         return false;
       }
+      
       const data = {
         ecode: ecode,
         erwriter: loginUser.unickname,
         ercontent: ercontent
       };
 
-      await axios.post('/api/ereply', data);
-      setPage(page);
-      fetchEreply();
-      setErcontent('');
+      await insertReply(data).then(() => {
+        setPage(page);
+        fetchEreply();
+        setErcontent('');
+      }).catch(() => {
+        swalError();
+      })
+
     }
   }
 
   const onDelete = async (ercode) => {
 
-    Swal.fire({
-      text: "정말로 삭제하시겠습니까?",
-      icon: 'warning',
-      showCancelButton: true,
-      confirmButtonColor: '#3085d6',
-      cancelButtonColor: '#d33',
-      confirmButtonText: '삭제',
-      cancelButtonText: '취소'
-    }).then(async (result) => {
+    swalQueryDelete().then(async (result) => {
 
       if (result.isConfirmed) {
 
-        try {
-          await axios.patch(`/api/ereply/${ercode}`)
-          Swal.fire({
-            text: "댓글이 삭제되었습니다",
-            icon: 'success',
-            confirmButtonColor: '#3085d6',
-          })
+        await deleteReply(ercode).then(() => {
+          swalSuccessDelete();
           fetchEreply();
-        } catch (e) {
-          Swal.fire({
-            text: "예상치 못한 오류가 발생하였습니다.",
-            icon: 'error',
-            confirmButtonColor: '#3085d6',
-          })
-        }
-
+        }).catch(() => {
+          swalError();
+        })
       }
     })
   }

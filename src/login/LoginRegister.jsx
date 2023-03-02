@@ -8,9 +8,10 @@ import ReactDatePicker from 'react-datepicker';
 import "react-datepicker/dist/react-datepicker.css";
 import DaumPostcode from "react-daum-postcode";
 import { useNavigate } from 'react-router-dom';
-import Swal from 'sweetalert2';
+import { checkDuplicateId, checkDuplicateNicknames, registerUser } from '../util/axios/login';
 import { onCheckEmail, onCheckPassword, onCheckPhoneNumber } from '../util/regex/regex';
-import { swalfailDuplicationCheckId, swalfailDuplicationCheckUnickname, swalSuccessDuplicationCheckId, swalSuccessDuplicationCheckNickname, swalWarnIdInput } from '../util/swal/swal.login.util';
+import { swalSuccessInsert } from '../util/swal/swal.basic.util';
+import { swalErrorImageType, swalfailDuplicationCheckId, swalfailDuplicationCheckUnickname, swalQueryRegisterId, swalSuccessDuplicationCheckId, swalSuccessDuplicationCheckNickname, swalWarnAuthenticate, swalWarnIdentifyPassword, swalWarnIdInput, swalWarnInputConfirmPassword, swalWarnInputGender, swalWarnInputIdPassword, swalWarnInputName } from '../util/swal/swal.login.util';
 import { swalWarnNicknameInput, swalWarnPasswordForm, swalWarnPhoneNumberForm } from '../util/swal/swal.my.util';
 
 const years = range(1930, getYear(new Date()) + 1, 1);
@@ -52,7 +53,7 @@ const LoginRegister = () => {
       return;
     }
 
-    const result = await axios.get(`/api/user/data/${form.unickname}`);
+    const result = await checkDuplicateNicknames(form.unickname);
     result.data === 1 ?
       swalSuccessDuplicationCheckNickname()
       :
@@ -74,7 +75,7 @@ const LoginRegister = () => {
       return;
     }
 
-    const result = await axios.get(`/api/user/${form.uid}`);
+    const result = await checkDuplicateId(form.uid);
     result.data === '' ?
       swalSuccessDuplicationCheckId()
       :
@@ -107,48 +108,27 @@ const LoginRegister = () => {
     e.preventDefault();
 
     if (uid === '' || upass === '') {
-      Swal.fire({
-        text: "아이디나 비밀번호를 입력하세요",
-        icon: 'warning',
-        confirmButtonColor: '#3085d6',
-      })
+      swalWarnInputIdPassword();
       return;
     }
 
     else if (ugender === "" || ugender === "성별") {
-      Swal.fire({
-        text: "성별을 선택하세요",
-        icon: 'warning',
-        confirmButtonColor: '#3085d6',
-      })
+      swalWarnInputGender();
       return;
     }
 
     else if (uname === '') {
-      Swal.fire({
-        text: "이름을 입력하세요",
-        icon: 'warning',
-        confirmButtonColor: '#3085d6',
-      })
+      swalWarnInputName();
       return;
     }
 
     else if (pass1 === '') {
-      Swal.fire({
-        text: "확인용 비밀번호를 입력하세요",
-        icon: 'warning',
-        confirmButtonColor: '#3085d6',
-      })
+      swalWarnInputConfirmPassword();
       return;
     }
 
     else if (upass !== pass1) {
-      Swal.fire({
-        text: "확인용 비밀번호와 변경하고자 하는 비밀번호가 일치하지 않습니다",
-        icon: 'warning',
-        confirmButtonColor: '#3085d6',
-        cancelButtonColor: '#d33',
-      })
+      swalWarnIdentifyPassword();
       return;
     }
 
@@ -169,28 +149,16 @@ const LoginRegister = () => {
 
 
 
-    Swal.fire({
-      text: "회원으로 등록하시겠습니까?",
-      icon: 'info',
-      showCancelButton: true,
-      confirmButtonColor: '#3085d6',
-      cancelButtonColor: '#d33',
-      confirmButtonText: '등록',
-      cancelButtonText: '취소'
-    }).then(async (result) => {
+    swalQueryRegisterId().then(async (result) => {
 
       //identification process
       if (result.isConfirmed) {
-        const result = await axios.get(`/api/user/authentification/${form.utel}`)
+        const result = await authenticateUser(form.utel)
 
         const authnum = prompt('인증번호를 입력하세요.');
 
         if (authnum !== String(result.data)) {
-          Swal.fire({
-            text: "인증번호가 올바르지 않습니다.",
-            icon: 'warning',
-            confirmButtonColor: '#3085d6',
-          })
+          swalWarnAuthenticate();
           return;
         }
 
@@ -207,25 +175,15 @@ const LoginRegister = () => {
         formData.append('ugender', ugender);
         formData.append('ubirth', ubirth);
 
-        try {
-          await axios.post('/api/user', formData);
-          Swal.fire({
-            text: "등록을 완료하였습니다!",
-            icon: 'success',
-            confirmButtonColor: '#3085d6',
-            cancelButtonColor: '#d33',
-          })
+
+        await registerUser(formData).then(() => {
+          swalSuccessInsert();
           navigate('/login/form')
-        } catch (e) {
-          if (e.message === 'Request failed with status code 500') {
-            Swal.fire({
-              text: "이미지 파일의 확장자는 jpg, png만 가능합니다.",
-              icon: 'error',
-              confirmButtonColor: '#3085d6',
-              cancelButtonColor: '#d33',
-            })
-          }
-        }
+        }).catch(e => {
+          if (e.message === 'Request failed with status code 500')
+            swalErrorImageType();
+        })
+
 
       }
     })

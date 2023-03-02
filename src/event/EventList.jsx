@@ -6,10 +6,11 @@ import EventItem from './EventItem';
 import Pagination from 'react-js-pagination';
 import { MenuItem, TextField } from '@material-ui/core';
 import { useLocation, useNavigate } from 'react-router-dom';
+import { getEventList } from '../util/axios/event';
 
 const EventList = () => {
-    const location=useLocation();
-    const navigate=useNavigate();
+    const location = useLocation();
+    const navigate = useNavigate();
     const search = qs.parse(location.search, { ignoreQueryPrefix: true });
     const [query, setQuery] = useState('');
     const [searchType, setSearchType] = useState('제목');
@@ -22,7 +23,7 @@ const EventList = () => {
     //loading on ㅡ> render ㅡ> loading off
     const fetchEventList = async () => {
         setLoading(true);
-        const result = await axios.get(`/api/event/list?page=${page}&num=${num}&searchType=${searchType}&keyword=${query}`);
+        const result = await getEventList(page, num, searchType, query);
         setEventList(result.data.list);
         setTotal(result.data.total);
         setLoading(false);
@@ -36,7 +37,7 @@ const EventList = () => {
         }
     }
 
-   
+
 
     useEffect(() => {
         fetchEventList();
@@ -47,11 +48,11 @@ const EventList = () => {
             style={{ width: '20rem', height: '20rem', marginTop: '220px' }} />
     )
 
-    const onPageChange=(e)=>{
+    const onPageChange = (e) => {
         navigate(`/event/list?page=${e}`)
         window.scrollTo({
-            top:0,
-            left:150,
+            top: 0,
+            left: 150,
             behavior: 'smooth'
         })
     }
@@ -95,7 +96,7 @@ const EventList = () => {
             <br />
             <br />
 
-            <div style={{ marginLeft:630 }}>
+            <div style={{ marginLeft: 630 }}>
                 <Pagination
                     activePage={page}
                     itemsCountPerPage={6}
