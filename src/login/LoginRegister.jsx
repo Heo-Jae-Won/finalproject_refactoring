@@ -8,11 +8,12 @@ import ReactDatePicker from 'react-datepicker';
 import "react-datepicker/dist/react-datepicker.css";
 import DaumPostcode from "react-daum-postcode";
 import { useNavigate } from 'react-router-dom';
-import { checkDuplicateId, checkDuplicateNicknames, registerUser } from '../util/axios/login';
+import { authenticateUser, checkDuplicateId, checkDuplicateNicknames, registerUser } from '../util/axios/login';
 import { onCheckEmail, onCheckPassword, onCheckPhoneNumber } from '../util/regex/regex';
 import { swalSuccessInsert } from '../util/swal/swal.basic.util';
-import { swalErrorImageType, swalfailDuplicationCheckId, swalfailDuplicationCheckUnickname, swalQueryRegisterId, swalSuccessDuplicationCheckId, swalSuccessDuplicationCheckNickname, swalWarnAuthenticate, swalWarnIdentifyPassword, swalWarnIdInput, swalWarnInputConfirmPassword, swalWarnInputGender, swalWarnInputIdPassword, swalWarnInputName } from '../util/swal/swal.login.util';
+import { swalfailDuplicationCheckId, swalfailDuplicationCheckUnickname, swalQueryRegisterId, swalSuccessDuplicationCheckId, swalSuccessDuplicationCheckNickname, swalWarnAuthenticate, swalWarnIdentifyPassword, swalWarnIdInput, swalWarnInputConfirmPassword, swalWarnInputGender, swalWarnInputIdPassword, swalWarnInputName } from '../util/swal/swal.login.util';
 import { swalWarnNicknameInput, swalWarnPasswordForm, swalWarnPhoneNumberForm } from '../util/swal/swal.my.util';
+import { swalErrorImageType } from '../util/swal/swal.pboard.util';
 
 const years = range(1930, getYear(new Date()) + 1, 1);
 const months = [
@@ -181,7 +182,7 @@ const LoginRegister = () => {
           navigate('/login/form')
         }).catch(e => {
           if (e.message === 'Request failed with status code 500')
-            swalErrorImageType();
+          swalErrorImageType();
         })
 
 

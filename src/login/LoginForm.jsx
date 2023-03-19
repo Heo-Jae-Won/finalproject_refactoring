@@ -2,7 +2,8 @@ import { Grid, TextField } from '@material-ui/core';
 import React, { useState } from 'react';
 import { Button, Card, Form, Row } from 'react-bootstrap';
 import { Link, useNavigate } from 'react-router-dom';
-import { swalWarnExistId, swalWarnExistPassword } from '../util/swal/swal.login.util';
+import { swalError } from '../util/swal/swal.basic.util';
+import { swalQueryRegisterId, swalWarnExistId, swalWarnExistPassword } from '../util/swal/swal.login.util';
 
 const LoginForm = () => {
   const navigate = useNavigate();
@@ -50,7 +51,7 @@ const LoginForm = () => {
       } else if (result.data === 1) {
 
         //move to restore
-        swalQueryRestoreId().then(async (result) => {
+        swalQueryRegisterId().then(async (result) => {
           if (result.isConfirmed)
             navigate(`/login/restore/${form.uid}`);
 

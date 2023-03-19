@@ -5,6 +5,7 @@ import "../Pagination.css";
 import { Button } from 'react-bootstrap';
 import EreplyList from './EreplyList';
 import { useNavigate, useParams } from 'react-router-dom';
+import { getEventRead } from '../util/axios/event';
 
 const EventRead = () => {
 const navigate=useNavigate();

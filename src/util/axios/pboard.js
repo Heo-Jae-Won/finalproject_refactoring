@@ -72,3 +72,10 @@ export const onPboardInsert = (formData) => {
         data: formData
     })
 }
+
+export const onPboardBest=()=>{
+    return instance({
+        url:`/pboard/best`,
+        method:'get',
+    })
+}

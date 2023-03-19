@@ -5,13 +5,14 @@ import "slick-carousel/slick/slick-theme.css";
 import "slick-carousel/slick/slick.css";
 import BestItem from './BestItem';
 import "../Carousel.css";
+import { onPboardBest } from '../util/axios/pboard';
 
 const BestList = () => {
   const [bestList, setBestList] = useState([]);
 
   //fetch 8 most liked item 
   const fetchBest = async () => {
-    const result = await axios.get(`/api/pboard/best`);
+    const result = await onPboardBest();
     setBestList(result.data);
   }
 
