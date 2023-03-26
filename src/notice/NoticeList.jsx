@@ -16,7 +16,7 @@ const NoticeList = () => {
     const [searchType, setSearchType] = useState('제목');
     const [noticeList, setNoticeList] = useState([]);
     const [loading, setLoading] = useState(false);
-    const [total, setTotal] = useState(1);
+    const [noticeListTotal, setNoticeListTotal] = useState(1);
     const page = parseInt(search.page) || 1;
     const num = 5;
 
@@ -24,8 +24,8 @@ const NoticeList = () => {
     const fetchNoticeList = async () => {
         setLoading(true);
         const result = await getNoticeList(page, num, searchType, query);
-        setNoticeList(result.data.list);
-        setTotal(result.data.total);
+        setNoticeList(result.data.noticeList);
+        setNoticeListTotal(result.data.noticeListTotal);
         setLoading(false);
     }
 
@@ -47,7 +47,7 @@ const NoticeList = () => {
     )
 
     const onPageChange = (e) => {
-        navigate(`/notice/list?page=${e}`)
+        navigate(`/notice/noticeList?page=${e}`)
         window.scrollTo({
             top: 0,
             left: 150,
@@ -85,9 +85,9 @@ const NoticeList = () => {
                     </tr>
                 </thead>
                 <tbody>
-                    {noticeList.map(noticelist =>
+                    {noticeList.map(noticeList =>
                         <>
-                            <NoticeItem key={noticelist.ncode} noticelist={noticelist} />
+                            <NoticeItem key={noticeList.ncode} noticeList={noticeList} />
                         </>
                     )}
                 </tbody>
@@ -99,7 +99,7 @@ const NoticeList = () => {
                 <Pagination
                     activePage={page}
                     itemsCountPerPage={6}
-                    totalItemsCount={total}
+                    totalItemsCount={noticeListTotal}
                     pageRangeDisplayed={10}
                     prevPageText={"‹"}
                     nextPageText={"›"}

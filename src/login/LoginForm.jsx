@@ -2,6 +2,7 @@ import { Grid, TextField } from '@material-ui/core';
 import React, { useState } from 'react';
 import { Button, Card, Form, Row } from 'react-bootstrap';
 import { Link, useNavigate } from 'react-router-dom';
+import { onLogin } from '../util/axios/login';
 import { swalError } from '../util/swal/swal.basic.util';
 import { swalQueryRegisterId, swalWarnExistId, swalWarnExistPassword } from '../util/swal/swal.login.util';
 
@@ -25,7 +26,7 @@ const LoginForm = () => {
 
 
 
-  const onLogin = async (e) => {
+  const onLoginSubmit = async (e) => {
     e.preventDefault();
 
     try {
@@ -64,6 +65,7 @@ const LoginForm = () => {
       }
 
     } catch (e) {
+      console.log(e);
       swalError();
 
     }
@@ -76,7 +78,7 @@ const LoginForm = () => {
     <div>
       <Row className='d-flex justify-content-center my-5'>
         <Card style={{ width: '30rem' }} className="p-3">
-          <Form onSubmit={onLogin}>
+          <Form onSubmit={onLoginSubmit}>
 
             <Grid item xs={12}>
               <TextField

@@ -13,7 +13,7 @@ const PboardList = () => {
     const location = useLocation();
     const navigate = useNavigate();
     const [postList, setPostList] = useState(['aaa']);
-    const [total, setTotal] = useState(1);
+    const [productListTotal, setProductListTotal] = useState(1);
     const [loading, setLoading] = useState(false);
     const [query, setQuery] = useState('');
     const [searchType, setSearchType] = useState('제목');
@@ -25,8 +25,8 @@ const PboardList = () => {
     const fetchPostList = useCallback(async () => {
         setLoading(true);
         const result = await getPboardList(page, num, searchType, query);
-        setPostList(result.data.list);
-        setTotal(result.data.total);
+        setPostList(result.data.productList);
+        setProductListTotal(result.data.productListTotal);
         setLoading(false);
     }, [page, query, searchType])
 
@@ -43,8 +43,8 @@ const PboardList = () => {
     //update plike on PboardItem
     const callPlike = async () => {
         const result = await getPboardList(page, num, searchType, query);
-        setPostList(result.data.list);
-        setTotal(result.data.total);
+        setPostList(result.data.productList);
+        setProductListTotal(result.data.productListToal);
     }
 
 
@@ -121,7 +121,7 @@ const PboardList = () => {
                 <Pagination
                     activePage={page}
                     itemsCountPerPage={6}
-                    totalItemsCount={total}
+                    totalItemsCount={productListTotal}
                     pageRangeDisplayed={10}
                     prevPageText={"‹"}
                     nextPageText={"›"}

@@ -1,5 +1,4 @@
 import { Grid, TextField } from '@material-ui/core';
-import axios from 'axios';
 import React, { useContext, useState } from 'react';
 import { Button, Card, Row } from 'react-bootstrap';
 import { useNavigate } from 'react-router-dom';
@@ -8,7 +7,6 @@ import { onPasswordUpdate } from '../util/axios/my';
 import { onCheckPassword } from '../util/regex/regex';
 import { swalError, swalQueryUpdate, swalSuccessUpdate } from '../util/swal/swal.basic.util';
 import { swalSuccessEqualPassword, swalWarnConfirmPassword, swalWarnNotEqualPassword, swalWarnPasswordForm, swalWarnPasswordInput } from '../util/swal/swal.my.util';
-
 const MyUpdatePass = () => {
     const navigate = useNavigate();
     const [pass1, setPass1] = useState('')

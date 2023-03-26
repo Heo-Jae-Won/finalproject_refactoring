@@ -11,7 +11,7 @@ import { useNavigate } from 'react-router-dom';
 import { authenticateUser, checkDuplicateId, checkDuplicateNicknames, registerUser } from '../util/axios/login';
 import { onCheckEmail, onCheckPassword, onCheckPhoneNumber } from '../util/regex/regex';
 import { swalSuccessInsert } from '../util/swal/swal.basic.util';
-import { swalfailDuplicationCheckId, swalfailDuplicationCheckUnickname, swalQueryRegisterId, swalSuccessDuplicationCheckId, swalSuccessDuplicationCheckNickname, swalWarnAuthenticate, swalWarnIdentifyPassword, swalWarnIdInput, swalWarnInputConfirmPassword, swalWarnInputGender, swalWarnInputIdPassword, swalWarnInputName } from '../util/swal/swal.login.util';
+import { swalfailDuplicationCheckId, swalfailDuplicationCheckUnickname, swalQueryRegisterId, swalWarnIdentifyPassword, swalSuccessDuplicationCheckId, swalSuccessDuplicationCheckNickname, swalWarnAuthenticate, swalWarnIdInput, swalWarnInputConfirmPassword, swalWarnInputGender, swalWarnInputIdPassword, swalWarnInputName } from '../util/swal/swal.login.util';
 import { swalWarnNicknameInput, swalWarnPasswordForm, swalWarnPhoneNumberForm } from '../util/swal/swal.my.util';
 import { swalErrorImageType } from '../util/swal/swal.pboard.util';
 

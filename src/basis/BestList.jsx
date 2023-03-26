@@ -5,7 +5,7 @@ import "slick-carousel/slick/slick-theme.css";
 import "slick-carousel/slick/slick.css";
 import BestItem from './BestItem';
 import "../Carousel.css";
-import { onPboardBest } from '../util/axios/pboard';
+import { onPboardBest } from '../util/axios/basis';
 
 const BestList = () => {
   const [bestList, setBestList] = useState([]);

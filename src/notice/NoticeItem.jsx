@@ -1,9 +1,9 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 
-const NoticeItem = ({ noticelist }) => {
+const NoticeItem = ({ noticeList }) => {
   const navigate=useNavigate();
-  const { ncode, ntitle,  nwriter, regDate } = noticelist;
+  const { ncode, ntitle,  nwriter, regDate } = noticeList;
 
   return (
     <tr style={{ cursor: 'pointer' }} onClick={() => navigate(`/notice/read/${ncode}`)}>

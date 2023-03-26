@@ -16,7 +16,7 @@ const EventList = () => {
     const [searchType, setSearchType] = useState('제목');
     const [eventList, setEventList] = useState([]);
     const [loading, setLoading] = useState(false);
-    const [total, setTotal] = useState(1);
+    const [eventListTotal, setEventListTotal] = useState(1);
     const page = parseInt(search.page) || 1;
     const num = 5;
 
@@ -24,14 +24,14 @@ const EventList = () => {
     const fetchEventList = async () => {
         setLoading(true);
         const result = await getEventList(page, num, searchType, query);
-        setEventList(result.data.list);
-        setTotal(result.data.total);
+        setEventList(result.data.eventList);
+        setEventListTotal(result.data.eventListTotal);
         setLoading(false);
     }
 
 
     //enter ㅡ> fetching
-    const callFiltered = (e) => {
+    const callfiltered = (e) => {
         if (e.keyCode === 13) {
             fetchEventList();
         }
@@ -74,7 +74,7 @@ const EventList = () => {
                 className='search2'
                 style={{ marginLeft: 15, marginBottom: 50, width: 200, marginTop: 100 }}
                 onChange={(e) => setQuery(e.target.value)}
-                callFiltered={callFiltered}>
+                callfiltered={callfiltered}>
             </TextField>
 
             <Table striped>
@@ -100,7 +100,7 @@ const EventList = () => {
                 <Pagination
                     activePage={page}
                     itemsCountPerPage={6}
-                    totalItemsCount={total}
+                    totalItemsCount={eventListTotal}
                     pageRangeDisplayed={10}
                     prevPageText={"‹"}
                     nextPageText={"›"}

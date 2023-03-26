@@ -4,6 +4,7 @@ import { useCallback } from 'react';
 import { Container, Nav, Navbar, NavDropdown } from 'react-bootstrap';
 import { useNavigate } from 'react-router-dom';
 import { UserContext } from '../context/UserContext';
+import { getUserInfo } from '../util/axios/basis';
 
 const HeaderPage = () => {
   const navigate = useNavigate();
@@ -23,10 +24,11 @@ const HeaderPage = () => {
   }
 
 
-const fetchUserInfo =  useCallback(async () => {
-    const result = await axios.get(`/api/user/${sessionStorage.getItem('uid')}`);
+const fetchUserInfo = async () => {
+    const result = await getUserInfo(uid);
+    console.log(result.data);
     setLoginUser(result.data);
-  },[setLoginUser]);
+  };
 
 
   useEffect(() => {
