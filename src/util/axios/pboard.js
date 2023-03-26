@@ -29,7 +29,7 @@ export const onPboardDelete = (pcode) => {
     })
 }
 
-export const getPboardList = (page, num, searchType, query) => {
+export const getPboardList = (page, num, searchType, keyword) => {
     return instance({
         url: '/pboard',
         method: 'get',
@@ -37,7 +37,7 @@ export const getPboardList = (page, num, searchType, query) => {
             page,
             num,
             searchType,
-            query
+            keyword
         }
     })
 }
@@ -73,9 +73,3 @@ export const onPboardInsert = (formData) => {
     })
 }
 
-export const onPboardBest=()=>{
-    return instance({
-        url:`/pboard/best`,
-        method:'get',
-    })
-}

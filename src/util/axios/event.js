@@ -7,7 +7,7 @@ export const getEventRead = (ecode) => {
     })
 }
 
-export const getEventList = (page, num, searchType, query) => {
+export const getEventList = (page, num, searchType, keyword) => {
     return instance({
         url: `/event/list`,
         method: 'get',
@@ -15,7 +15,7 @@ export const getEventList = (page, num, searchType, query) => {
             page,
             num,
             searchType,
-            query
+            keyword
         }
     })
 }

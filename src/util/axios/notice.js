@@ -7,7 +7,7 @@ export const getNoticeRead = (ncode) => {
     })
 }
 
-export const getNoticeList = (page, num, searchType, query) => {
+export const getNoticeList = (page, num, searchType, keyword) => {
     return instance({
         url: '/notice',
         method: 'get',
@@ -15,7 +15,7 @@ export const getNoticeList = (page, num, searchType, query) => {
             page,
             num,
             searchType,
-            query
+            keyword
         }
     })
 }
