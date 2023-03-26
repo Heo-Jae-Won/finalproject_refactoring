@@ -1,6 +1,6 @@
 import Swal from 'sweetalert2';
 export const swalQueryInsert = () => {
-    Swal.fire({
+   return Swal.fire({
         text: "등록하시겠습니까?",
         icon: 'info',
         showCancelButton: true,
@@ -12,15 +12,16 @@ export const swalQueryInsert = () => {
 }
 
 export const swalSuccessInsert = () => {
-    Swal.fire({
+   return Swal.fire({
         text: "등록이 완료되었습니다",
         icon: 'success',
         confirmButtonColor: '#3085d6',
     })
 }
 
+
 export const swalQueryUpdate = () => {
-    Swal.fire({
+   return Swal.fire({
         text: "정말로 수정하시겠습니까?",
         icon: 'info',
         showCancelButton: true,
@@ -32,7 +33,7 @@ export const swalQueryUpdate = () => {
 }
 
 export const swalError = () => {
-    Swal.fire({
+   return Swal.fire({
         text: "예상치 못한 오류가 발생하였습니다",
         icon: 'error',
         confirmButtonColor: '#3085d6',
@@ -40,7 +41,7 @@ export const swalError = () => {
 }
 
 export const swalSuccessUpdate = () => {
-    Swal.fire({
+   return Swal.fire({
         text: "수정을 완료하였습니다!",
         icon: 'success',
         confirmButtonColor: '#3085d6',
@@ -49,7 +50,7 @@ export const swalSuccessUpdate = () => {
 }
 
 export const swalQueryDelete = () => {
-    Swal.fire({
+   return Swal.fire({
         text: "정말로 삭제하시겠습니까?",
         icon: 'warning',
         showCancelButton: true,
@@ -61,7 +62,7 @@ export const swalQueryDelete = () => {
 }
 
 export const swalSuccessDelete = () => {
-    Swal.fire({
+   return Swal.fire({
         text: "삭제를 완료하였습니다!",
         icon: 'success',
         confirmButtonColor: '#3085d6',
