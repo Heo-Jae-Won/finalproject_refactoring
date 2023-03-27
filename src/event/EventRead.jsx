@@ -18,6 +18,7 @@ const navigate=useNavigate();
     ewriter: '',
     regDate: '',
   });
+  
   useEffect(() => {
     fetchEventRead();
   }, [])

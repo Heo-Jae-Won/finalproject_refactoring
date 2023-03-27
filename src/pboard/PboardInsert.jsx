@@ -57,8 +57,10 @@ const PboardInsert = () => {
                 await onPboardInsert(formData).then(() => {
                     swalSuccessInsert();
                     navigate('/pboard/list')
-                }).catch(() => {
-                    swalAlertFileUploadTypeError();
+                }).catch((error) => {
+                   if(error.response.data.includes("imagefile only accepted for jpeg,png")){
+                       swalAlertFileUploadTypeError();
+                   }
                 })
 
             }

@@ -24,12 +24,3 @@ export const swalAlertFileUploadTypeError = () => {
         confirmButtonColor: '#3085d6',
     })
 }
-
-export const swalErrorImageType=()=>{
-   return Swal.fire({
-        text: '이미지 파일이 png나 jpeg가 아닙니다.',
-        icon: 'error',
-        confirmButtonColor: '#3085d6',
-        cancelButtonColor: '#d33',
-    })
-}

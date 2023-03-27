@@ -13,7 +13,7 @@ import { onCheckEmail, onCheckPassword, onCheckPhoneNumber } from '../util/regex
 import { swalSuccessInsert } from '../util/swal/swal.basic.util';
 import { swalfailDuplicationCheckId, swalfailDuplicationCheckUnickname, swalQueryRegisterId, swalWarnIdentifyPassword, swalSuccessDuplicationCheckId, swalSuccessDuplicationCheckNickname, swalWarnAuthenticate, swalWarnIdInput, swalWarnInputConfirmPassword, swalWarnInputGender, swalWarnInputIdPassword, swalWarnInputName } from '../util/swal/swal.login.util';
 import { swalWarnNicknameInput, swalWarnPasswordForm, swalWarnPhoneNumberForm } from '../util/swal/swal.my.util';
-import { swalErrorImageType } from '../util/swal/swal.pboard.util';
+import { swalAlertFileUploadTypeError, swalErrorImageType } from '../util/swal/swal.pboard.util';
 
 const years = range(1930, getYear(new Date()) + 1, 1);
 const months = [
@@ -180,10 +180,12 @@ const LoginRegister = () => {
         await registerUser(formData).then(() => {
           swalSuccessInsert();
           navigate('/login/form')
-        }).catch(e => {
-          if (e.message === 'Request failed with status code 500')
-          swalErrorImageType();
-        })
+        }).catch(error => {
+          if (error.response.data.includes("imagefile only accepted for jpeg,png")) {
+            swalAlertFileUploadTypeError();
+          }
+        }
+        )
 
 
       }

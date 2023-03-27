@@ -1,14 +1,12 @@
 import { Grid, TextField } from '@material-ui/core';
-import axios from 'axios';
 import React, { useState } from 'react';
 import { Alert, Button, Card, Form, Row } from 'react-bootstrap';
-import Swal from 'sweetalert2'
 import { FindId } from '../util/axios/login';
 import { swalError } from '../util/swal/swal.basic.util';
 import { swalWarnEmailInput } from '../util/swal/swal.my.util';
 
 const LoginFindId = () => {
-  const [message, SetMessge] = useState('');
+  const [message, setMessge] = useState('');
   const [form, setForm] = useState({
     uemail: '',
     uname: ''
@@ -37,9 +35,9 @@ const LoginFindId = () => {
           ...form,
           uemail: ''
         });
-        SetMessge('검색된 아이디가 없습니다');
+        setMessge('검색된 아이디가 없습니다');
       } else {
-        SetMessge('아이디는 ' + result.data + '입니다');
+        setMessge('아이디는 ' + result.data + '입니다');
       }
 
     } catch (e) {

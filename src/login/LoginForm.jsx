@@ -65,7 +65,6 @@ const LoginForm = () => {
       }
 
     } catch (e) {
-      console.log(e);
       swalError();
 
     }

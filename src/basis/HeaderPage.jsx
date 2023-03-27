@@ -1,6 +1,4 @@
-import axios from 'axios';
 import React, { useContext, useEffect } from 'react';
-import { useCallback } from 'react';
 import { Container, Nav, Navbar, NavDropdown } from 'react-bootstrap';
 import { useNavigate } from 'react-router-dom';
 import { UserContext } from '../context/UserContext';
