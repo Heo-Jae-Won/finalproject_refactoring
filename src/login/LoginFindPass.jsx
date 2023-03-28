@@ -1,14 +1,12 @@
-import React, { useState } from 'react'
-import { Alert, Button, Card, Form, Row } from 'react-bootstrap';
 import { Grid, TextField } from '@material-ui/core';
-import axios from 'axios';
-import Swal from 'sweetalert2'
+import React, { useState } from 'react';
+import { Alert, Button, Card, Form, Row } from 'react-bootstrap';
 import { useNavigate } from 'react-router-dom';
+import { sendTempPassword } from '../util/axios/login';
 import { onCheckEmail } from '../util/regex/regex';
-import { swalWarnEmailForm } from '../util/swal/swal.my.util';
 import { swalError } from '../util/swal/swal.basic.util';
 import { swalSuccessTempPassword, swalWarnExistEmail, swalWarnExistId, swalWarnInputIdEmail } from '../util/swal/swal.login.util';
-import { sendTempPassword } from '../util/axios/login';
+import { swalWarnEmailForm } from '../util/swal/swal.my.util';
 
 const LoginFindPass = () => {
   const message = '비밀번호를 재발급하는 데 약 7-8초의 시간이 소요됩니다.';

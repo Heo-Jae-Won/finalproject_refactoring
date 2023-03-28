@@ -22,10 +22,6 @@ const LoginForm = () => {
     }))
   }
 
-
-
-
-
   const onLoginSubmit = async (e) => {
     e.preventDefault();
 

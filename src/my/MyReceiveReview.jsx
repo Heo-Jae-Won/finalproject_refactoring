@@ -24,7 +24,6 @@ const MyReceiveReview = () => {
   const page = parseInt(search.page) || 1;
 
   const callReceivewReview = async () => {
-    const cancelToken = axios.CancelToken.source();
 
     setLoading(true);
 

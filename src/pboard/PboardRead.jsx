@@ -107,6 +107,7 @@ const PboardRead = () => {
 
 
         await onPboardUpdate(formData).catch((e) => {
+          //변경이 필요함.Exception 메시지 받아오게끔.
           e.message === 'Network Error' ?
             swalAlertFileUploadSizeError()
             :
