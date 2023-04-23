@@ -5,7 +5,7 @@ import { useNavigate } from 'react-router-dom';
 const FooterPage = () => {
 const navigate=useNavigate();
 
-  const onPageLoadAJAX = (e) => {
+  const handlePageLoad = (e) => {
     e.preventDefault();
     const href = e.target.getAttribute("href")
     navigate(href);
@@ -21,17 +21,17 @@ const navigate=useNavigate();
             <ul className='c-fYLPMS' style={{ display: 'flex' }}>
               <li className='c-jTOXZz'>
                
-                <Nav.Link onClick={onPageLoadAJAX} href='#'>
+                <Nav.Link onClick={handlePageLoad} href='#'>
                   개인정보 처리 방침
                 </Nav.Link>
               </li>
               <li>
-                <Nav.Link onClick={onPageLoadAJAX} href='#'>
+                <Nav.Link onClick={handlePageLoad} href='#'>
                   브랜드 리소스
                 </Nav.Link>
               </li>
               <li>
-                <Nav.Link onClick={onPageLoadAJAX} href='#'>
+                <Nav.Link onClick={handlePageLoad} href='#'>
                   자주 묻는 질문
                 </Nav.Link>
               </li>

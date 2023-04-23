@@ -1,15 +1,14 @@
 import { MenuItem, TextField } from '@material-ui/core';
-import axios from 'axios';
 import qs from 'qs';
 import React, { useEffect, useState, useCallback } from 'react';
 import { Row, Spinner } from 'react-bootstrap';
 import Pagination from 'react-js-pagination';
 import { useLocation, useNavigate } from 'react-router-dom';
 import '../Pagination.css';
-import { getPboardList } from '../util/axios/pboard';
-import PboardItem from './PboardItem';
+import { getProductBoardList } from '../util/axios/product.board';
+import ProductBoardItem from './ProductBoardItem'
 
-const PboardList = () => {
+const ProductBoardList = () => {
     const location = useLocation();
     const navigate = useNavigate();
     const [postList, setPostList] = useState(['aaa']);
@@ -22,9 +21,9 @@ const PboardList = () => {
     const num = 6;
 
     //loading on ㅡ> render ㅡ> loading off
-    const fetchPostList = useCallback(async () => {
+    const fetchProductBoardList = useCallback(async () => {
         setLoading(true);
-        const result = await getPboardList(page, num, searchType, query);
+        const result = await getProductBoardList(page, num, searchType, query);
         setPostList(result.data.productList);
         setProductListTotal(result.data.productListTotal);
         setLoading(false);
@@ -32,25 +31,25 @@ const PboardList = () => {
 
 
     //enter ㅡ> new render
-    const fetchFilterdList = (e) => {
+    const fetchFilteredProductBoardList = (e) => {
         if (e.keyCode === 13) {
-            fetchPostList();
+            fetchProductBoardList();
         }
     }
 
 
 
-    //update plike on PboardItem
-    const callPlike = async () => {
-        const result = await getPboardList(page, num, searchType, query);
+    //update productLikeCnt on productBoardItem
+    const fetchProductLikeCnt = async () => {
+        const result = await getProductBoardList(page, num, searchType, query);
         setPostList(result.data.productList);
-        setProductListTotal(result.data.productListToal);
+        setProductListTotal(result.data.productListTotal);
     }
 
 
     useEffect(() => {
-        fetchPostList();
-    }, [page])
+        fetchProductBoardList();
+    }, [fetchProductBoardList, page])
 
 
     // progress bar when loading
@@ -60,7 +59,7 @@ const PboardList = () => {
     )
 
     const onPageChange = (e) => {
-        navigate(`/pboard/list?page=${e}`)
+        navigate(`/productBoard/list?page=${e}`)
         window.scrollTo({
             top: 0,
             left: 150,
@@ -102,13 +101,13 @@ const PboardList = () => {
             <TextField className="search2" value={query}
                 style={{ marginLeft: 15, marginBottom: 50, width: 200 }}
                 onChange={(e) => setQuery(e.target.value)}
-                onKeyDown={fetchFilterdList}>
+                onKeyDown={fetchFilteredProductBoardList}>
             </TextField>
 
 
             <Row style={{ marginLeft: 55 }}>
                 {postList?.map(postList =>
-                    <PboardItem key={postList.pcode} callPlike={callPlike} postList={postList} />
+                    <ProductBoardItem key={postList.productCode} fetchProductLikeCnt={fetchProductLikeCnt} postList={postList} />
                 )}
             </Row>
 
@@ -133,4 +132,4 @@ const PboardList = () => {
     )
 }
 
-export default PboardList
+export default ProductBoardList

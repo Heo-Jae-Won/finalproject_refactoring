@@ -6,73 +6,75 @@ import { Button, ButtonGroup, Form, Row, Spinner } from 'react-bootstrap';
 import { useNavigate, useParams } from 'react-router-dom';
 import { UserContext } from '../context/UserContext';
 import { app } from '../fireStore';
-import { getPboardRead, onPboardDelete, onPboardUpdate } from '../util/axios/pboard';
-import { swalError, swalQueryDelete, swalSuccessUpdate } from '../util/swal/swal.basic.util';
-import { swalAlertFileUploadSizeError, swalBoardDelete } from '../util/swal/swal.pboard.util';
+import { useCallback } from 'react';
+import { deleteProductBoard, getProductBoardRead, updateProductBoard } from '../util/axios/product.board';
+import { informServerError, informSuccess } from '../util/swal/information';
+import { confirmDelete } from '../util/swal/confirmation';
+import { DeleteAlready, failFileUploadBySize } from '../util/swal/service.exception';
 
-const PboardRead = () => {
-  const { pcode } = useParams();
+const ProductBoardRead = () => {
+  const { productCode } = useParams();
   const navigate = useNavigate();
   const db = getFirestore(app);
   const { loginUser } = useContext(UserContext);
   const [image, setImage] = useState('');
   const [loading, setLoading] = useState(false);
-  const [comparisonPcode, setComparisonPcode] = useState([]);
+  const [comparisonProductCode, setComparisonProductCode] = useState([]);
   const [postRead, setPostRead] = useState({
-    ptitle: '',
-    pcontent: '',
-    pwriter: '',
-    plike: '',
-    pimage: '',
-    viewcnt: '',
-    regDate: '',
-    pname: '',
-    upoint: '',
+    productTitle: '',
+    productContent: '',
+    productWriter: '',
+    productLikecnt: '',
+    productImage: '',
+    productViewcnt: '',
+    productRegDate: '',
+    productName: '',
+    userPoint: '',
     file: null,
-    uid: ''
+    userId: ''
   });
-  const { uid, ptitle, upoint, pcontent, pwriter, pimage, pprice, pname, file } = postRead;
+  const { userId, productTitle, userPoint, productContent, productWriter, productImage, productPrice, productName, file } = postRead;
 
 
 
-  const callPostRead = async () => {
+  const fetchProductBoard = useCallback( async () => {
     setLoading(true);
 
-    //pcode o ㅡ>rendering on || pcode x ㅡ>move to PboardList
+    //productCode o ㅡ>rendering on || productCode x ㅡ>move to ProductBoardList
     try {
-      const result = await getPboardRead(pcode);
+      const result = await getProductBoardRead(productCode);
 
       const q = query(
         collection(db, `chatroom`),
-        where('who', 'array-contains', sessionStorage.getItem('uid')),
+        where('who', 'array-contains', sessionStorage.getItem('userId')),
         limit(100)
       );
 
       onSnapshot(q, (snapshot) => {
         let rows = [];
         snapshot.forEach((doc) => {
-          rows.push(doc.data().pcode);
+          rows.push(doc.data().productCode);
         });
-        setComparisonPcode(rows);
+        setComparisonProductCode(rows);
       });
 
       //sold, removed ㅡ> not allow access
-      if (result.data.pcondition === 0) {
+      if (result.data.productStatus === 0) {
         setPostRead(result.data);
-        setImage(result.data.pimage);
+        setImage(result.data.productImage);
       } else {
-        swalBoardDelete();
+        DeleteAlready();
         let seconds_ms = 1000;
-        setTimeout(() => navigate('/pboard/list'), seconds_ms);
+        setTimeout(() => navigate('/productBoard/list'), seconds_ms);
       }
     } catch (e) {
-      swalError();
+      informServerError();
     }
     setLoading(false);
-  }
+  },[db,navigate,productCode]);
 
 
-  const onChangeForm = (e) => {
+  const handleFormChange = (e) => {
     setPostRead(postRead => ({
       ...postRead,
       [e.target.name]: e.target.value
@@ -80,7 +82,7 @@ const PboardRead = () => {
     )
   }
 
-  const onChangeFile = (e) => {
+  const handleFileChange = (e) => {
     setPostRead(postRead => ({
       ...postRead,
       file: e.target.files[0]
@@ -88,63 +90,63 @@ const PboardRead = () => {
     setImage(URL.createObjectURL(e.target.files[0]))
   }
 
-  const onUpdate = (e) => {
+  const handleProductBoardUpdate = (e) => {
     e.preventDefault();
 
-    swalSuccessUpdate().then(async (result) => {
+    informSuccess().then(async (result) => {
 
       //update click
       if (result.isConfirmed) {
         const formData = new FormData();
         formData.append("file", file);
-        formData.append("pcode", pcode);
-        formData.append("pcontent", pcontent);
-        formData.append("ptitle", ptitle);
-        formData.append("pprice", pprice);
-        formData.append("pwriter", pwriter);
-        formData.append("pimage", pimage);
-        formData.append("pname", pname);
+        formData.append("productCode", productCode);
+        formData.append("productContent", productContent);
+        formData.append("productTitle", productTitle);
+        formData.append("productPrice", productPrice);
+        formData.append("productWriter", productWriter);
+        formData.append("productImage", productImage);
+        formData.append("productName", productName);
 
 
-        await onPboardUpdate(formData).catch((e) => {
+        await updateProductBoard(formData).catch((e) => {
           //변경이 필요함.Exception 메시지 받아오게끔.
           e.message === 'Network Error' ?
-            swalAlertFileUploadSizeError()
+            failFileUploadBySize()
             :
-            swalError();
+            informServerError();
         });
       }
     })
 
   }
 
-  const onDelete = (e) => {
+  const handleProductBoardDelete = (e) => {
     e.preventDefault();
-    swalQueryDelete().then(async (result) => {
+    confirmDelete().then(async (result) => {
       //remove click
       if (result.isConfirmed) {
 
-        await onPboardDelete(pcode).then(() => {
-          swalSuccessUpdate();
-          navigate('/pboard/list')
+        await deleteProductBoard(productCode).then(() => {
+          informSuccess();
+          navigate('/productBoard/list')
         }).catch(() => {
-          swalError();
+          informServerError();
         })
 
       }
     })
   }
 
-  const setRoomList = async () => {
+  const setChatRoomList = async () => {
 
-    if (comparisonPcode.includes(pcode) === false) {
+    if (!comparisonProductCode.includes(productCode)) {
       const docRef = collection(db, 'chatroom');
       await addDoc(docRef, {
-        who: [sessionStorage.getItem('uid'), uid],
+        who: [sessionStorage.getItem('userId'), userId],
         date: new Intl.DateTimeFormat('kr', { dateStyle: 'full', timeStyle: 'full' })
           .format(new Date()),
-        pcode: pcode,
-        pimage: pimage,
+        productCode: productCode,
+        productImage: productImage,
       });
     }
     navigate(`/my/chat`)
@@ -152,8 +154,8 @@ const PboardRead = () => {
   }
 
   useEffect(() => {
-    callPostRead();
-  }, [])
+    fetchProductBoard();
+  }, [fetchProductBoard])
 
 
   if (loading) return (
@@ -171,7 +173,7 @@ const PboardRead = () => {
             <img src={image || 'https://dummyimage.com/100x100'} alt="빈이미지" width={300} height={300} />
             <Form.Control className='my-3'
               type="file"
-              onChange={onChangeFile} />
+              onChange={handleFileChange} />
 
             <hr />
 
@@ -180,11 +182,11 @@ const PboardRead = () => {
                 variant="outlined"
                 required
                 fullWidth
-                value={pwriter}
+                value={productWriter}
                 readOnly
                 label="작성자"
-                name="pwriter"
-                autoComplete="pwriter"
+                name="productWriter"
+                autoComplete="productWriter"
               />
             </Grid>
 
@@ -194,13 +196,13 @@ const PboardRead = () => {
                 variant="outlined"
                 required
                 fullWidth
-                value={ptitle}
-                onChange={loginUser.unickname === pwriter && onChangeForm}
+                value={productTitle}
+                onChange={loginUser.userNickname === productWriter && handleFormChange}
                 label="제목"
                 helperText='제목은 50까지로 제한'
                 FormHelperTextProps={{ style: { fontSize: 15 } }}
-                name="ptitle"
-                autoComplete="ptitle"
+                name="productTitle"
+                autoComplete="productTitle"
               />
             </Grid>
             <hr />
@@ -210,13 +212,13 @@ const PboardRead = () => {
                 variant="outlined"
                 required
                 fullWidth
-                value={pcontent}
-                onChange={loginUser.unickname === pwriter && onChangeForm}
+                value={productContent}
+                onChange={loginUser.userNickname === productWriter && handleFormChange}
                 label="내용"
                 helperText='내용은 300자까지로 제한'
                 FormHelperTextProps={{ style: { fontSize: 15 } }}
-                name="pcontent"
-                autoComplete="pcontent"
+                name="productContent"
+                autoComplete="productContent"
               />
             </Grid>
 
@@ -228,11 +230,11 @@ const PboardRead = () => {
                 fullWidth
                 helperText='원하는 가격을 입력하세요'
                 FormHelperTextProps={{ style: { fontSize: 15 } }}
-                value={pprice}
-                onChange={loginUser.unickname === pwriter && onChangeForm}
-                name="pprice"
+                value={productPrice}
+                onChange={loginUser.userNickname === productWriter && handleFormChange}
+                name="productPrice"
                 type='number'
-                autoComplete="pprice"
+                autoComplete="productPrice"
               />
             </Grid>
 
@@ -245,34 +247,34 @@ const PboardRead = () => {
                 helperText='상품명은 30자까지로 제한'
                 label='상품명'
                 FormHelperTextProps={{ style: { fontSize: 15 } }}
-                value={pname}
-                onChange={loginUser.unickname === pwriter && onChangeForm}
-                name="pname"
+                value={productName}
+                onChange={loginUser.userNickname === productWriter && handleFormChange}
+                name="productName"
               />
             </Grid>
             <hr />
 
-            {upoint ? <>
+            {userPoint ? <>
               <span style={{ marginRight: 50, fontSize: 20 }}>판매자 별점</span>
               <Rating
                 emptySymbol="fa fa-star-o fa-2x"
                 fullSymbol="fa fa-star fa-2x"
-                value={upoint}
+                value={userPoint}
                 readOnly
-                fractions={5} precision={0.5} max={5} />({upoint})
+                fractions={5} precision={0.5} max={5} />({userPoint})
             </>
               : <h1>거래 이력이 없습니다.</h1>}
             <div style={{ marginTop: 30 }}>
 
               <ButtonGroup>
-                {loginUser.unickname === pwriter &&
+                {loginUser.userNickname === productWriter &&
                   <>
-                    <Button onClick={onUpdate} style={{ marginRight: 90 }}>상품 수정</Button>
-                    <Button style={{ marginRight: 90 }} onClick={onDelete} >상품 삭제</Button>
+                    <Button onClick={handleProductBoardUpdate} style={{ marginRight: 90 }}>상품 수정</Button>
+                    <Button style={{ marginRight: 90 }} onClick={handleProductBoardDelete} >상품 삭제</Button>
                   </>}
-                {loginUser.unickname !== pwriter &&
-                  <Button style={{ marginRight: 90 }} onClick={() => setRoomList()}>채팅하기</Button>}
-                <Button onClick={() => navigate('/pboard/list')}>상품 목록으로</Button>
+                {loginUser.userNickname !== productWriter &&
+                  <Button style={{ marginRight: 90 }} onClick={() => setChatRoomList()}>채팅하기</Button>}
+                <Button onClick={() => navigate('/productBoard/list')}>상품 목록으로</Button>
               </ButtonGroup>
             </div>
 
@@ -283,4 +285,4 @@ const PboardRead = () => {
   )
 }
 
-export default PboardRead
+export default ProductBoardRead

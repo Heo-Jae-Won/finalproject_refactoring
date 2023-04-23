@@ -62,7 +62,7 @@ const AboutPage = () => {
       <div class="my-4" style={{ marginBottom: 140, marginTop: 230 }}>
         <Row>
           <Col style={{ height: '230' }}>
-            <Card style={{ width: '200px', height: "200px", marginLeft: 230,height:223 }}>
+            <Card style={{ width: '200px',  marginLeft: 230,height:223 }}>
               <Card.Img variant="left" src="/image/a4.png" />
               <Card.Body>
                 <Card.Title style={{fontFamily:'font', marginTop:25}}>허재원 - 팀장</Card.Title>

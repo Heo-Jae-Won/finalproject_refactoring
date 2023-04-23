@@ -1,15 +1,15 @@
 import { instance } from "./axios.util"
 
-export const getEventRead = (ecode) => {
+export const getEventRead = (eventCode) => {
     return instance({
-        url: `/event/${ecode}`,
+        url: `/event/${eventCode}`,
         method: 'get'
     })
 }
 
 export const getEventList = (page, num, searchType, keyword) => {
     return instance({
-        url: `/event/list`,
+        url: `/event`,
         method: 'get',
         params: {
             page,
@@ -20,29 +20,29 @@ export const getEventList = (page, num, searchType, keyword) => {
     })
 }
 
-export const getReplyList = (ecode, page, num) => {
+export const getReplyList = (eventCode, page, num) => {
     return instance({
-        url: `/ereply/list`,
+        url: `/eventReply`,
         method: 'get',
         params: {
-            ecode,
+            eventCode,
             page,
             num
         }
     })
 }
 
-export const insertReply = (data) => {
+export const insertReply = (eventReply) => {
     return instance({
-        url: `/ereply`,
+        url: `/eventReply`,
         method: 'post',
-        data,
+        data: eventReply,
     })
 }
 
-export const deleteReply = (ercode) => {
+export const deleteReply = (eventReplyCode) => {
     return instance({
-        url: `/ereply/${ercode}`,
+        url: `/eventReply/${eventReplyCode}`,
         method: 'patch'
     })
 }

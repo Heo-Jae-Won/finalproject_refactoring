@@ -3,13 +3,13 @@ import { useNavigate } from 'react-router-dom';
 
 const NoticeItem = ({ noticeList }) => {
   const navigate=useNavigate();
-  const { ncode, ntitle,  nwriter, regDate } = noticeList;
+  const { noticeCode, noticeTitle,  noticeWriter, noticeRegDate } = noticeList;
 
   return (
-    <tr style={{ cursor: 'pointer' }} onClick={() => navigate(`/notice/read/${ncode}`)}>
-      <td>{nwriter}</td>
-      <td>{ntitle}</td>
-      <td>{regDate}</td>
+    <tr style={{ cursor: 'pointer' }} onClick={() => navigate(`/notice/read/${noticeCode}`)}>
+      <td>{noticeWriter}</td>
+      <td>{noticeTitle}</td>
+      <td>{noticeRegDate}</td>
     </tr>
   )
 }

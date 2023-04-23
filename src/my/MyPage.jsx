@@ -16,17 +16,17 @@ const MyPage = () => {
   return (
     <div>
       <Routes>
-        <Route path="/info/:uid" element={<MyInfo/>} />
+        <Route path="/info/:userId" element={<MyInfo/>} />
         <Route path="/chat" element={<MyChatList/>} />
-        <Route path="/pay/:pcode" element={<MyPay/>} />
+        <Route path="/pay/:productCode" element={<MyPay/>} />
         <Route path="/menu" element={<MyMenu/>} />
         <Route path="/review" element={<MyReceiveReview/>}/>
-        <Route path="/review/insert/:paycode" element={<MyInsertReview/>} />
+        <Route path="/review/insert/:payCode" element={<MyInsertReview/>} />
         <Route path="/pass/update" element={<MyUpdatePass/>} />
         <Route path="/sell" element={<MySellList/>} />
         <Route path="/buy" element={<MyBuyList/>} />
-        <Route path="/buychart" element={<MyBuyListChart/>} />
-        <Route path="/sellchart" element={<MySellListChart/>} />
+        <Route path="/buyChart" element={<MyBuyListChart/>} />
+        <Route path="/sellChart" element={<MySellListChart/>} />
       </Routes>
     </div>
   )

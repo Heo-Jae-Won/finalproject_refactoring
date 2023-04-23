@@ -5,6 +5,7 @@ import { Button, Spinner, Table } from 'react-bootstrap';
 import Pagination from 'react-js-pagination';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { getTradeBuyList } from '../util/axios/my';
+import { useCallback } from 'react';
 
 const MyBuyList = () => {
   const location=useLocation();
@@ -16,24 +17,24 @@ const MyBuyList = () => {
   const page = parseInt(search.page) || 1;
   const buyer = search.buyer;
 
-  const fetchBuyList = async () => {
+  const fetchBuyList = useCallback( async () => {
     setLoading(true);
     const result = await getTradeBuyList(buyer,page);
     setBuyList(prev=>result.data.list);
     setTotal(result.data.total);
     setLoading(false);
-  }
+  },[buyer, page]);
 
   useEffect(() => {
     fetchBuyList();
-  }, [page])
+  }, [fetchBuyList, page])
 
   if (loading) return (
     <Spinner animation="border" variant="primary"
       style={{ width: '20rem', height: '20rem', marginTop: '220px' }} />
   )
 
-  const onPageChange=(e)=>{
+  const handlePageChange=(e)=>{
     navigate(`/my/buy?page=${e}`)
     window.scrollTo({
         top:0,
@@ -82,7 +83,7 @@ const MyBuyList = () => {
           pageRangeDisplayed={10}
           prevPageText={"‹"}
           nextPageText={"›"}
-          onChange={(e) => onPageChange(e)}
+          onChange={(e) => handlePageChange(e)}
         /> </div>
         : <div style={{ marginTop: 200 }}>
           <h1 style={{ fontSize: 60, color: 'red', marginBottom: 200 }}>해당 검색 결과가 존재하지 않습니다.</h1>

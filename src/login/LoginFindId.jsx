@@ -1,67 +1,64 @@
-import { Grid, TextField } from '@material-ui/core';
-import React, { useState } from 'react';
-import { Alert, Button, Card, Form, Row } from 'react-bootstrap';
-import { FindId } from '../util/axios/login';
-import { swalError } from '../util/swal/swal.basic.util';
-import { swalWarnEmailInput } from '../util/swal/swal.my.util';
+import { Grid, TextField } from "@material-ui/core";
+import React, { useState } from "react";
+import { Alert, Button, Card, Form, Row } from "react-bootstrap";
+import { requireInput } from "../util/swal/requirement";
+import { findUserId } from "../util/axios/login";
+import { informServerError } from "../util/swal/information";
 
 const LoginFindId = () => {
-  const [message, setMessge] = useState('');
+  const [message, setMessage] = useState("");
   const [form, setForm] = useState({
-    uemail: '',
-    uname: ''
-  })
+    userEmail: "",
+    userName: "",
+  });
+  const { userEmail, userName } = form;
 
-  const onChangeForm = (e) => {
-    setForm(prev => ({
+  const handleFormChange = (e) => {
+    setForm((prev) => ({
       ...prev,
-      [e.target.name]: e.target.value
-    }))
-  }
+      [e.target.name]: e.target.value,
+    }));
+  };
 
-  const onFindId = async (e) => {
+  const handleUserIdFind = async (e) => {
     e.preventDefault();
 
-    if (form.uemail === '') {
-      swalWarnEmailInput();
+    if (userEmail) {
+      requireInput();
       return;
     }
 
     try {
-      const result = await FindId(form.uemail,form.uname);
+      const result = await findUserId(userEmail, userName);
 
-      if (result.data === '') {
-        setForm({
+      if (result.data) {
+        setForm((form) => ({
           ...form,
-          uemail: ''
-        });
-        setMessge('검색된 아이디가 없습니다');
+          userEmail: "",
+        }));
+        setMessage("검색된 아이디가 없습니다");
       } else {
-        setMessge('아이디는 ' + result.data + '입니다');
+        setMessage("아이디는 " + result.data + "입니다");
       }
-
     } catch (e) {
-      swalError();
+      informServerError();
     }
+  };
 
-  }
   return (
-
-
     <div>
-      <Row className='d-flex justify-content-center my-5'>
-        <Card style={{ width: '30rem' }} className="p-3">
-          <Form onSubmit={onFindId}>
-
+      <Row className="d-flex justify-content-center my-5">
+        <Card style={{ width: "30rem" }} className="p-3">
+          <Form onSubmit={handleUserIdFind}>
             <Grid item xs={12}>
               <TextField
                 variant="outlined"
                 required
                 fullWidth
                 label="name"
-                value={form.uname}
-                name="uname"
-                onChange={onChangeForm}
+                value={userName}
+                name="userName"
+                onChange={handleFormChange}
               />
             </Grid>
             <hr />
@@ -72,23 +69,23 @@ const LoginFindId = () => {
                 required
                 fullWidth
                 label="email"
-                value={form.uemail}
-                name="uemail"
-                onChange={onChangeForm}
+                value={userEmail}
+                name="userEmail"
+                onChange={handleFormChange}
               />
             </Grid>
 
             <hr />
 
-            <Button type="submit" style={{ width: '40%' }}>아이디 찾기</Button>
+            <Button type="submit" style={{ width: "40%" }}>
+              아이디 찾기
+            </Button>
             {message && <Alert>{message}</Alert>}
           </Form>
-
-
         </Card>
       </Row>
     </div>
-  )
-}
+  );
+};
 
-export default LoginFindId
+export default LoginFindId;

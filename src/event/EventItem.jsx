@@ -1,18 +1,21 @@
-import React from 'react';
-import { useNavigate } from 'react-router-dom';
+import React from "react";
+import { useNavigate } from "react-router-dom";
 
-const EventItem = ({ eventlist }) => {
+const EventItem = ({ eventList }) => {
   const navigate = useNavigate();
-  const { ecode, etitle, econtent, ewriter, regDate } = eventlist;
+  const { eventCode, eventTitle, eventContent, eventWriter, eventRegDate } = eventList;
 
   return (
-    <tr style={{ cursor: 'pointer' }} onClick={() => navigate(`/event/read/${ecode}`)}>
-      <td>{etitle}</td>
-      <td>{econtent}</td>
-      <td>{ewriter}</td>
-      <td>{regDate}</td>
+    <tr
+      style={{ cursor: "pointer" }}
+      onClick={() => navigate(`/event/read/${eventCode}`)}
+    >
+      <td>{eventTitle}</td>
+      <td>{eventContent}</td>
+      <td>{eventWriter}</td>
+      <td>{eventRegDate}</td>
     </tr>
-  )
-}
+  );
+};
 
 export default EventItem;

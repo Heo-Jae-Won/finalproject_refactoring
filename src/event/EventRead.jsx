@@ -1,80 +1,87 @@
-import axios from 'axios';
-import React, { useState, useEffect } from 'react';
-import { Spinner } from 'react-bootstrap';
+import React, { useState, useEffect } from "react";
+import { Spinner } from "react-bootstrap";
 import "../Pagination.css";
-import { Button } from 'react-bootstrap';
-import EreplyList from './EreplyList';
-import { useNavigate, useParams } from 'react-router-dom';
-import { getEventRead } from '../util/axios/event';
+import { Button } from "react-bootstrap";
+import { useNavigate, useParams } from "react-router-dom";
+import { getEventRead } from "../util/axios/event";
+import { useCallback } from "react";
+import EventReplyList from "./EventReplyList";
 
 const EventRead = () => {
-const navigate=useNavigate();
-  const {ecode} = useParams();
+  const navigate = useNavigate();
+  const { eventCode } = useParams();
   const [loading, setLoading] = useState(false);
 
   const [eventRead, setEventRead] = useState({
-    etitle: '',
-    econtent: '',
-    ewriter: '',
-    regDate: '',
+    eventTitle: "",
+    eventContent: "",
+    eventWriter: "",
+    eventRegDate: "",
   });
   
-  useEffect(() => {
-    fetchEventRead();
-  }, [])
-
-  const fetchEventRead = async () => {
+  const fetchEventRead = useCallback( async () => {
     setLoading(true);
-    const result = await getEventRead(ecode);
+    const result = await getEventRead(eventCode);
     setEventRead(result.data);
     setLoading(false);
-  }
+  },[eventCode]);
 
-  const { etitle, econtent, ewriter, regDate } = eventRead;
-
-  if (loading) return (
-    <Spinner animation="border" variant="primary"
-      style={{ width: '20rem', height: '20rem', marginTop: '220px' }} />
-  )
+  useEffect(() => {
+    fetchEventRead();
+  }, [fetchEventRead]);
 
 
+
+  const { eventTitle, eventContent, eventWriter, eventRegDate } = eventRead;
+
+  if (loading)
+    return (
+      <Spinner
+        animation="border"
+        variant="primary"
+        style={{ width: "20rem", height: "20rem", marginTop: "220px" }}
+      />
+    );
 
   return (
-    <div className='event_notice'>
-      <h2 className='title'>이벤트</h2>
-      <div className='event_article'>
-        <article className='article event_article' style={{ height: '272px' }}>
-          
-        <div className="article_title">
-            <h2 style={{ border: 'none' }}>
-              제목ㅡ{etitle}
-            </h2>
-            <div style={{width:'100%',   borderBottom: '3px solid #000'}}>
-              <span style={{ float: 'left' }} aria-label='등록일'>
-                작성자: {ewriter}
+    <div className="event_notice">
+      <h2 className="title">이벤트</h2>
+      <div className="event_article">
+        <article className="article event_article" style={{ height: "272px" }}>
+          <div className="article_title">
+            <h2 style={{ border: "none" }}>제목ㅡ{eventTitle}</h2>
+            <div style={{ width: "100%", borderBottom: "3px solid #000" }}>
+              <span style={{ float: "left" }} aria-label="등록일">
+                작성자: {eventWriter}
               </span>
-              <h5 className='article_date' style={{ float: 'right' }} aria-label='등록일'>
-                {regDate}
+              <h5
+                className="article_date"
+                style={{ float: "right" }}
+                aria-label="등록일"
+              >
+                {eventRegDate}
               </h5>
             </div>
           </div>
 
-          <section className='article_data'>
-            <div className='fr_view'>
-              내용ㅡ {econtent}
-            </div>
+          <section className="article_data">
+            <div className="fr_view">내용ㅡ {eventContent}</div>
           </section>
         </article>
       </div>
 
       {/* 댓글정보는 bno가 필요하기 때문에 bno를 가져가야 함. */}
-      <EreplyList ecode={ecode} />
-      <Button style={{marginTop:100}} onClick={() => {navigate(-1) }}>목록으로</Button>
+      <EventReplyList eventCode={eventCode} />
+      <Button
+        style={{ marginTop: 100 }}
+        onClick={() => {
+          navigate(-1);
+        }}
+      >
+        목록으로
+      </Button>
     </div>
-  )
-}
+  );
+};
 
-export default EventRead
-
-
-
+export default EventRead;

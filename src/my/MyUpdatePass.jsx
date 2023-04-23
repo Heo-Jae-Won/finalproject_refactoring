@@ -3,22 +3,23 @@ import React, { useContext, useState } from 'react';
 import { Button, Card, Row } from 'react-bootstrap';
 import { useNavigate } from 'react-router-dom';
 import { UserContext } from '../context/UserContext';
-import { onPasswordUpdate } from '../util/axios/my';
-import { onCheckPassword } from '../util/regex/regex';
-import { swalError, swalQueryUpdate, swalSuccessUpdate } from '../util/swal/swal.basic.util';
-import { swalSuccessEqualPassword, swalWarnConfirmPassword, swalWarnNotEqualPassword, swalWarnPasswordForm, swalWarnPasswordInput } from '../util/swal/swal.my.util';
+import { requireEqualityPassword, requireInput, requireValidationPass } from '../util/swal/requirement';
+import { checkPasswordValid } from '../util/regex/regex';
+import { informEqualPassword, informNotEqualPassword, informSuccess } from '../util/swal/information';
+import { confirmUpdate } from '../util/swal/confirmation';
+import { updatePassword } from '../util/axios/my/user';
 const MyUpdatePass = () => {
     const navigate = useNavigate();
-    const [pass1, setPass1] = useState('')
+    const [confirmPassword, setConfirmPassword] = useState('')
     const { loginUser } = useContext(UserContext);
     const [isChecked, setIsChecked] = useState(false);
 
     const [form, setForm] = useState({
-        uid: loginUser.uid,
-        upass: ''
+        userId: loginUser.userId,
+        userPass: ''
     })
 
-    const { uid, upass } = form;
+    const { userId, userPass } = form;
 
     const onChangeForm = (e) => {
         setForm(prev => ({
@@ -30,41 +31,41 @@ const MyUpdatePass = () => {
     //validate password
     const onValidatePass = async (e) => {
         e.preventDefault();
-        if (pass1 === '') {
-            swalWarnPasswordInput();
+        if (!confirmPassword) {
+            requireInput();
         }
 
-        else if (onCheckPassword(upass) === false) {
-            swalWarnPasswordForm();
+        else if (!checkPasswordValid(userPass) ) {
+            requireValidationPass();
         }
 
-        else if (upass !== pass1) {
-            swalWarnNotEqualPassword();
+        else if (userPass !== confirmPassword) {
+            informNotEqualPassword();
         }
 
-        else if (upass === pass1) {
-            swalSuccessEqualPassword();
+        else if (userPass === confirmPassword) {
+            informEqualPassword();
             setIsChecked(true);
         }
     }
 
-    const onUpdate = (e) => {
+    const handlePasswordUpdate = (e) => {
         e.preventDefault();
 
-        swalQueryUpdate().then(async (result) => {
+        confirmUpdate().then(async (result) => {
 
             if (result.isConfirmed) {
                 
                 const data = {
-                    uid: uid,
-                    upass: upass
+                    userId,
+                    userPass
                 };
 
-                await onPasswordUpdate(data).then(() => {
-                    swalSuccessUpdate();
-                    navigate(`/my/info/${sessionStorage.getItem('uid')}`)
+                await updatePassword(data).then(() => {
+                    informSuccess();
+                    navigate(`/my/info/${sessionStorage.getItem('userId')}`)
                 }).catch(() => {
-                    swalError();
+                    informSuccess();
                 })
 
             }
@@ -87,8 +88,8 @@ const MyUpdatePass = () => {
                             label="비밀번호"
                             helperText="8-10자 영문대소문자와 숫자를 조합"
                             FormHelperTextProps={{ style: { fontSize: 15 } }}
-                            value={form.upass}
-                            name="upass"
+                            value={userPass}
+                            name="userPass"
                             type="password"
                             onChange={onChangeForm}
                         />
@@ -100,19 +101,19 @@ const MyUpdatePass = () => {
                             variant="outlined"
                             required
                             fullWidth
-                            id="upass"
+                            id="userPass"
                             label="비밀번호 확인"
-                            value={pass1}
-                            name="upass"
-                            autoComplete="upass"
+                            value={confirmPassword}
+                            name="userPass"
+                            autoComplete="userPass"
                             type="password"
-                            onChange={(e) => setPass1(e.target.value)}
+                            onChange={(e) => setConfirmPassword(e.target.value)}
                         />
                     </Grid>
                     <Button onClick={onValidatePass} className='mt-3'>패스워드 일치 확인</Button>
 
-                    <Button onClick={isChecked === true ? onUpdate :
-                        swalWarnConfirmPassword} className='mt-3'>비밀번호 변경</Button>
+                    <Button onClick={isChecked === true ? handlePasswordUpdate :
+                        requireEqualityPassword} className='mt-3'>비밀번호 변경</Button>
                 </Card>
             </Row>
         </div>

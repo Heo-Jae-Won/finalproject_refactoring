@@ -4,10 +4,12 @@ import { Alert, Button, Form, Row, Spinner } from 'react-bootstrap';
 import DaumPostcodeEmbed from 'react-daum-postcode';
 import { useNavigate, useParams } from 'react-router-dom';
 import { UserContext } from '../context/UserContext';
-import { getUserCondition, getUserId, getUserNickname, onUserInfoUpdate } from '../util/axios/my';
-import { onCheckEmail, onCheckPhoneNumber } from '../util/regex/regex';
-import { swalError, swalQueryUpdate, swalSuccessUpdate } from '../util/swal/swal.basic.util';
-import { swalQueryDeactivate, swalSuccessDeactivate, swalWarnEmailForm, swalWarnNicknameInput, swalWarnPhoneNumberForm } from '../util/swal/swal.my.util';
+import { useCallback } from 'react';
+import { requireInput, requireValidationPass } from '../util/swal/requirement';
+import { getUserId, getUserNickname, getUserStatus, updateUserInfo } from '../util/axios/my/user';
+import { checkEmailValid, checkPhoneNumberValid } from '../util/regex/regex';
+import { confirmDeactivate, confirmUpdate } from '../util/swal/confirmation';
+import { informServerError, informSuccess } from '../util/swal/information';
 
 const MyInfo = () => {
   const { loginUser, setLoginUser } = useContext(UserContext);
@@ -17,11 +19,11 @@ const MyInfo = () => {
   const [loading, setLoading] = useState(false);
   const [address, setAddress] = useState('');
   const [message, setMessage] = useState('');
-  const { uid } = useParams();
+  const { userId } = useParams();
 
 
 
-  const onChangeLoginUser = (e) => {
+  const handleFormChange = (e) => {
     setLoginUser(prev => ({
       ...prev,
       [e.target.name]: e.target.value
@@ -30,13 +32,13 @@ const MyInfo = () => {
 
 
   //check duplication of nickname
-  const onCheckUnickanme = async (e) => {
+  const handleUserNicknameCheck = async (e) => {
     e.preventDefault();
-    if (loginUser.unickname === '') {
-      swalWarnNicknameInput();
+    if (!loginUser.userNickname) {
+      requireInput();
     }
 
-    const result = await getUserNickname(loginUser.unickname);
+    const result = await getUserNickname(loginUser.userNickname);
     result.data === 1 ?
       setMessage('사용 가능한 닉네임입니다.')
       :
@@ -46,7 +48,7 @@ const MyInfo = () => {
 
 
 
-  const onChangeLoginUserFile = (e) => {
+  const handleFileChange = (e) => {
     setLoginUser(prev => ({
       ...prev,
       file: e.target.files[0],
@@ -55,13 +57,13 @@ const MyInfo = () => {
   }
 
 
-  const fetchUserInfo = async () => {
+  const fetchUserInfo =useCallback( async () => {
     setLoading(true);
-    const result = await getUserId(uid);
+    const result = await getUserId(userId);
     setLoginUser(result.data);
-    setImage(result.data.uprofile);
+    setImage(result.data.userProfile);
     setLoading(false);
-  }
+  },[setLoginUser, userId]);
 
   //fetching address API
   const handlePostCode = (data) => {
@@ -90,35 +92,35 @@ const MyInfo = () => {
     padding: "7px",
   };
 
-  //update myinfo
-  const onUpdate = () => {
+  //update myInfo
+  const handleUserInfoUpdate = () => {
 
-    if (!onCheckPhoneNumber(loginUser.utel)) {
-      swalWarnPhoneNumberForm();
+    if (!checkPhoneNumberValid(loginUser.userTel) || !checkEmailValid(loginUser.userEmail)) {
+      requireValidationPass();
       return;
     }
 
-    if (!onCheckEmail(loginUser.uemail)) {
-      swalWarnEmailForm();
-      return;
-    }
 
-    swalQueryUpdate().then(async (result) => {
+    confirmUpdate().then(async (result) => {
       if (result.isConfirmed) {
 
+    //      setLoginUser(prev => ({
+    //   ...prev,
+    //   file: e.target.files[0],
+    // })) 여기서 file을 추가했음. 그래서 file이라는 property를 쓸 수 있는 것.
         const data = {
-          uid: uid,
-          unickname: loginUser.unickname,
-          uprofile: loginUser.uprofile,
-          uaddress: address || loginUser.uaddress,
-          uemail: loginUser.uemail,
-          utel: loginUser.utel,
+          userId: userId,
+          userNickname: loginUser.userNickname,
+          userProfile: loginUser.userProfile,
+          userAddress: address || loginUser.userAddress,
+          userEmail: loginUser.userEmail,
+          userTel: loginUser.userTel,
           file: loginUser.file
         }
-        await onUserInfoUpdate(data).then(() => {
-          swalSuccessUpdate();
+        await updateUserInfo(data).then(() => {
+          informSuccess();
         }).catch(() => {
-          swalError();
+          informServerError();
         })
 
       }
@@ -126,14 +128,14 @@ const MyInfo = () => {
   }
 
   //deactivate membership
-  const onDelete = () => {
+  const handleUserDeactivate = () => {
 
-    swalQueryDeactivate().then(async (result) => {
+    confirmDeactivate().then(async (result) => {
       if (result.isConfirmed) {
 
-        await getUserCondition(uid).then(() => {
-          swalSuccessDeactivate();
-          sessionStorage.removeItem('uid');
+        await getUserStatus(userId).then(() => {
+          informSuccess();
+          sessionStorage.removeItem('userId');
           navigate('/');
         });
 
@@ -143,7 +145,7 @@ const MyInfo = () => {
 
   useEffect(() => {
     fetchUserInfo();
-  }, [uid]);
+  }, [fetchUserInfo, userId]);
 
   if (loading) return (
     <Spinner animation="border" variant="primary"
@@ -167,20 +169,20 @@ const MyInfo = () => {
               <Form.Label>NickName</Form.Label>
               <Form.Control
                 placeholder="닉네임"
-                name='unickname'
-                value={loginUser.unickname}
-                onChange={onChangeLoginUser} />
+                name='userNickname'
+                value={loginUser.userNickname}
+                onChange={handleFormChange} />
               {message && <Alert>{message}</Alert>}
-              <Button className='mt-3' onClick={onCheckUnickanme}>닉네임 중복확인</Button>
+              <Button className='mt-3' onClick={handleUserNicknameCheck}>닉네임 중복확인</Button>
             </Form.Group>
 
             <Form.Group className="mb-3" style={{ width: '300px' }}>
               <Form.Label>Tel</Form.Label>
               <Form.Control
-                name='utel'
+                name='userTel'
                 placeholder="Tel"
-                value={loginUser.utel}
-                onChange={onChangeLoginUser} />
+                value={loginUser.userTel}
+                onChange={handleFormChange} />
             </Form.Group>
             <Form.Group className="mb-3">
             </Form.Group>
@@ -188,18 +190,18 @@ const MyInfo = () => {
             <Form.Group className="mb-3" style={{ width: '300px' }}>
               <Form.Label>Email</Form.Label>
               <Form.Control
-                name='uemail'
+                name='userEmail'
                 placeholder="Email"
-                value={loginUser.uemail}
-                onChange={onChangeLoginUser} />
+                value={loginUser.userEmail}
+                onChange={handleFormChange} />
             </Form.Group>
 
             <Form.Group className="mb-3" style={{ width: '300px' }}>
               <Form.Label>Address</Form.Label>
               <Form.Control
-                name='uaddress'
-                value={address || loginUser.uaddress}
-                onChange={onChangeLoginUser} />
+                name='userAddress'
+                value={address || loginUser.userAddress}
+                onChange={handleFormChange} />
             </Form.Group>
 
             <Button type='button'
@@ -213,17 +215,17 @@ const MyInfo = () => {
             <Form.Control
               className="my-3" style={{ width: '300px' }}
               type="file"
-              onChange={onChangeLoginUserFile}
+              onChange={handleFileChange}
             />
             <img src={image} style={{ width: "300px", height: "350px", marginLeft: '-150px' }} alt="빈 이미지" />
 
             <div style={{ marginTop: 20, marginLeft: '-100px' }}>
               <Button className='ff'
                 style={{ marginLeft: '-10px' }}
-                onClick={onUpdate}>
+                onClick={handleUserInfoUpdate}>
                 정보 변경하기
               </Button>
-              <Button className='ff1' onClick={onDelete}>회원탈퇴</Button>
+              <Button className='ff1' onClick={handleUserDeactivate}>회원탈퇴</Button>
               <Button className='mx-5' onClick={() => navigate(`/my/pass/update`)}>
                 비밀번호 변경
               </Button>

@@ -1,36 +1,35 @@
 import { Card, Grid, TextField } from '@material-ui/core'
-import axios from 'axios'
 import React, { useEffect, useState } from 'react'
 import { Button, Form, Row } from 'react-bootstrap'
 import { useNavigate, useParams } from 'react-router-dom'
-import { onPboardInsert } from '../util/axios/pboard'
-import { swalQueryInsert, swalSuccessInsert } from '../util/swal/swal.basic.util'
-import { swalAlertFileUploadTypeError } from '../util/swal/swal.pboard.util'
+import { informSuccess } from '../util/swal/information'
+import { confirmInsert } from '../util/swal/confirmation'
+import { insertProductBoard } from '../util/axios/product.board'
+import { swalAlertFileUploadTypeError } from '../util/swal/service.exception'
 
-const PboardInsert = () => {
-    const { unickname } = useParams();
+const ProductBoardInsert = () => {
+    const { userNickname } = useParams();
     const navigate = useNavigate();
     const [image, setImage] = useState('');
     const [form, setForm] = useState({
-        pwriter: unickname,
-        pprice: '',
-        ptitle: '',
-        pcontent: '',
-        pname: '',
+        productWriter: userNickname,
+        productPrice: '',
+        productTitle: '',
+        productContent: '',
+        productName: '',
         file: null,
-        pimage: ''
+        productImage: ''
     })
+    const { productName, productPrice, productTitle, productContent, productImage, file, productWriter } = form;
 
-    const { pname, pprice, ptitle, pcontent, pimage, file, pwriter } = form;
-
-    const onChangeForm = (e) => {
+    const handleFormChange = (e) => {
         setForm(prev => ({
             ...prev,
             [e.target.name]: e.target.value
         }))
     }
 
-    const onChangeFile = (e) => {
+    const handleFileChange = (e) => {
         setForm(prev => ({
             ...prev,
             file: e.target.files[0]
@@ -38,25 +37,25 @@ const PboardInsert = () => {
         setImage(URL.createObjectURL(e.target.files[0]))
     }
 
-    const onInsert = async () => {
+    const handleProductBoardInsert = async () => {
 
         const formData = new FormData();
         formData.append("file", file);
-        formData.append("pcontent", pcontent);
-        formData.append("ptitle", ptitle);
-        formData.append("pprice", pprice);
-        formData.append("pwriter", pwriter);
-        formData.append("pimage", pimage);
-        formData.append("pname", pname);
+        formData.append("productContent", productContent);
+        formData.append("productTitle", productTitle);
+        formData.append("productPrice", productPrice);
+        formData.append("productWriter", productWriter);
+        formData.append("productImage", productImage);
+        formData.append("productName", productName);
 
 
-        swalQueryInsert().then(async (result) => {
+        confirmInsert().then(async (result) => {
 
             if (result.isConfirmed) {
 
-                await onPboardInsert(formData).then(() => {
-                    swalSuccessInsert();
-                    navigate('/pboard/list')
+                await insertProductBoard(formData).then(() => {
+                    informSuccess();
+                    navigate('/productBoard/list')
                 }).catch((error) => {
                    if(error.response.data.includes("imagefile only accepted for jpeg,png")){
                        swalAlertFileUploadTypeError();
@@ -91,7 +90,7 @@ const PboardInsert = () => {
                         </Grid>
                         <Form.Control className='my-3'
                             type="file"
-                            onChange={onChangeFile} />
+                            onChange={handleFileChange} />
                         <hr />
 
                         <Grid item xs={12}>
@@ -99,11 +98,11 @@ const PboardInsert = () => {
                                 variant="outlined"
                                 required
                                 fullWidth
-                                value={ptitle}
-                                onChange={onChangeForm}
+                                value={productTitle}
+                                onChange={handleFormChange}
                                 label="제목"
-                                name="ptitle"
-                                autoComplete="ptitle"
+                                name="productTitle"
+                                autoComplete="productTitle"
                             />
                         </Grid>
                         <hr />
@@ -113,9 +112,9 @@ const PboardInsert = () => {
                                 required
                                 fullWidth
                                 label="상품명"
-                                value={pname}
-                                onChange={onChangeForm}
-                                name="pname"
+                                value={productName}
+                                onChange={handleFormChange}
+                                name="productName"
                             />
                         </Grid>
                         <hr />
@@ -125,11 +124,11 @@ const PboardInsert = () => {
                                 variant="outlined"
                                 required
                                 fullWidth
-                                value={pcontent}
-                                onChange={onChangeForm}
+                                value={productContent}
+                                onChange={handleFormChange}
                                 label="내용은 300자 제한"
-                                name="pcontent"
-                                autoComplete="pcontent"
+                                name="productContent"
+                                autoComplete="productContent"
                             />
 
                             <hr />
@@ -139,18 +138,18 @@ const PboardInsert = () => {
                                     required
                                     fullWidth
                                     label="가격"
-                                    value={pprice}
-                                    onChange={onChangeForm}
-                                    name="pprice"
+                                    value={productPrice}
+                                    onChange={handleFormChange}
+                                    name="productPrice"
                                     type='number'
-                                    autoComplete="pprice"
+                                    autoComplete="productPrice"
                                 />
                             </Grid>
                             <hr />
 
                         </Grid>
                         <div style={{ marginTop: 30 }}>
-                            <Button onClick={onInsert} style={{ width: '20%', margintTop: 100 }}>상품 등록</Button>
+                            <Button onClick={handleProductBoardInsert} style={{ width: '20%', marginTop: 100 }}>상품 등록</Button>
                             <Button onClick={() => navigate(-1)} style={{ width: '20%', marginLeft: 200 }}>뒤로가기</Button>
 
                         </div>
@@ -162,7 +161,7 @@ const PboardInsert = () => {
     )
 }
 
-export default PboardInsert
+export default ProductBoardInsert
 
 
 

@@ -1,6 +1,6 @@
 import { instance } from "./axios.util"
 
-export const onUserRestore = (formData) => {
+export const restoreUser = (formData) => {
     return instance({
         url: '/user/restore',
         method: 'post',
@@ -8,28 +8,28 @@ export const onUserRestore = (formData) => {
     })
 }
 
-export const checkDuplicateNicknames = (unickname) => {
+export const checkDuplicationUserNickname = (userNickname) => {
     return instance({
-        url: `/user/data/${unickname}`,
+        url: `/user/data/${userNickname}`,
         method: 'get'
     })
 }
 
-export const checkDuplicateId = (id) => {
+export const checkDuplicationUserId = (id) => {
     return instance({
         url: `/user/${id}`,
         method: 'get'
     })
 }
 
-export const authenticateUser = (utel) => {
+export const authenticateUser = (userTel) => {
     return instance({
-        url: `/user/authentification/${utel}`,
+        url: `/user/authentication/${userTel}`,
         method: 'get'
     })
 }
 
-export const registerUser = (formData) => {
+export const saveUser = (formData) => {
     return instance({
         url: `/user`,
         method: 'post',
@@ -37,7 +37,7 @@ export const registerUser = (formData) => {
     })
 }
 
-export const onLogin = (form) => {
+export const login = (form) => {
     return instance({
         url: `/user/login`,
         method: 'post',
@@ -53,9 +53,9 @@ export const sendTempPassword = (form) => {
     })
 }
 
-export const FindId=(email,name)=>{
+export const findUserId=(userEmail,userName)=>{
 return instance({
-    url:`/user/id/${email}/${name}`,
+    url:`/user/id/${userEmail}/${userName}`,
     method:'get'
 })
 }

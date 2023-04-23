@@ -1,7 +1,7 @@
 import { MenuItem, TextField } from '@material-ui/core';
 import axios from 'axios';
 import qs from 'qs';
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { Spinner, Table } from 'react-bootstrap';
 import Pagination from 'react-js-pagination';
 import { useLocation, useNavigate } from 'react-router-dom';
@@ -21,13 +21,13 @@ const NoticeList = () => {
     const num = 5;
 
     //loading on ㅡ> rendering ㅡ> loading off
-    const fetchNoticeList = async () => {
+    const fetchNoticeList = useCallback( async () => {
         setLoading(true);
         const result = await getNoticeList(page, num, searchType, query);
         setNoticeList(result.data.noticeList);
         setNoticeListTotal(result.data.noticeListTotal);
         setLoading(false);
-    }
+    },[page, query, searchType]);
 
 
 
@@ -39,14 +39,14 @@ const NoticeList = () => {
 
     useEffect(() => {
         fetchNoticeList();
-    }, [page])
+    }, [fetchNoticeList, page])
 
     if (loading) return (
         <Spinner animation="border" variant="primary"
             style={{ width: '20rem', height: '20rem', marginTop: '220px' }} />
     )
 
-    const onPageChange = (e) => {
+    const handlePageChange = (e) => {
         navigate(`/notice/noticeList?page=${e}`)
         window.scrollTo({
             top: 0,
@@ -87,7 +87,7 @@ const NoticeList = () => {
                 <tbody>
                     {noticeList.map(noticeList =>
                         <>
-                            <NoticeItem key={noticeList.ncode} noticeList={noticeList} />
+                            <NoticeItem key={noticeList.noticeCode} noticeList={noticeList} />
                         </>
                     )}
                 </tbody>
@@ -103,7 +103,7 @@ const NoticeList = () => {
                     pageRangeDisplayed={10}
                     prevPageText={"‹"}
                     nextPageText={"›"}
-                    onChange={(e) => onPageChange(e)}
+                    onChange={(e) => handlePageChange(e)}
                 /> </div>
         </div>
 

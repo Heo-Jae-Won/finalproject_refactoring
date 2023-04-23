@@ -5,7 +5,7 @@ import { useNavigate } from 'react-router-dom';
 
 const BestItem = ({ bestList }) => {
   const navigate = useNavigate();
-  const { pcode, plike, ptitle, pimage } = bestList;
+  const { productCode, productLikeCnt, productTitle, productImage } = bestList;
 
   const onClick = (e) => {
     e.preventDefault();
@@ -14,11 +14,11 @@ const BestItem = ({ bestList }) => {
   }
   return (
     <div>
-      <img src={pimage} alt={ptitle} width={300} height={300} border={2} />
-      <span>{ptitle}</span>
-      <p>좋아요: {plike}</p>
+      <img src={productImage} alt={productTitle} width={300} height={300} border={2} />
+      <span>{productTitle}</span>
+      <p>좋아요: {productLikeCnt}</p>
       <Button variant='secondary'>
-        <Nav.Link href={`/pboard/read/${pcode}`} onClick={onClick}>자세히보기</Nav.Link>
+        <Nav.Link href={`/productBoard/read/${productCode}`} onClick={onClick}>자세히보기</Nav.Link>
       </Button>
     </div>
   )

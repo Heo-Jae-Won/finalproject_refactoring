@@ -1,49 +1,45 @@
-import axios from 'axios';
-import React, { useEffect } from 'react';
-import { useState } from 'react';
-import { useContext } from 'react';
+import React, { useCallback, useContext, useEffect, useState } from 'react';
 import { Button } from 'react-bootstrap';
-import { UserContext } from '../context/UserContext';
-import Swal from 'sweetalert2'
 import { useNavigate, useParams } from 'react-router-dom';
-import { swalErrorPayment, swalErrorVerification, swalQueryReviewWrite } from '../util/swal/swal.my.util';
-import { swalError } from '../util/swal/swal.basic.util';
-import { extractPboardRead } from '../util/axios/pboard';
-import { getPaymentId, onPayment } from '../util/axios/my';
+import { UserContext } from '../context/UserContext';
+import { getPaymentId, payProduct } from '../util/axios/my/payment';
+import { extractProductBoardRead } from '../util/axios/product.board';
+import { confirmWriterReview } from '../util/swal/confirmation';
+import { informFailedPayment, informServerError } from '../util/swal/information';
+import { failPaymentVerification } from '../util/swal/service.exception';
 
 const MyPay = () => {
   const { loginUser } = useContext(UserContext);
-  const { pcode } = useParams();
+  const { productCode } = useParams();
   const navigate = useNavigate();
   const [productInfo, SetProductInfo] = useState({
-    pwriter: '',
-    pprice: '',
-    pname: ''
+    productWriter: '',
+    productPrice: '',
+    productName: ''
   });
 
-  const extractReadData = async () => {
-    const result = await extractPboardRead(pcode).then(() => {
+  const handleDataExtract =useCallback( async () => {
+    const result = await extractProductBoardRead(productCode).then(() => {
       SetProductInfo(result.data)
     })
+  },[productCode]);
 
-  }
+  const { productWriter, productPrice, productName } = productInfo;
 
-  const { pwriter, pprice, pname } = productInfo;
-
-  const onClickPayment = () => {
+  const handlePaymentClick = () => {
     const { IMP } = window;
     IMP.init('imp37385705'); // 결제 데이터 정의
     const data = {
       pg: 'html5_inicis', // PG사 (필수항목)
       pay_method: 'card', // 결제수단 (필수항목)
       merchant_uid: `pay_${new Date().getTime()}`, // 주문번호 (필수항목)
-      name: pname, // 주문명 (필수항목)
-      amount: pprice, // 금액이고 반드시 숫자로 써야함. (필수항목)
+      name: productName, // 주문명 (필수항목)
+      amount: productPrice, // 금액이고 반드시 숫자로 써야함. (필수항목)
       custom_data: { name: '부가정보', desc: '세부 부가정보' },
       buyer_name: loginUser.uname, // 구매자 이름
-      buyer_tel: loginUser.utel, // 구매자 전화번호 (필수항목)
-      buyer_email: loginUser.uemail, // 구매자 이메일
-      buyer_addr: loginUser.uaddress,
+      buyer_tel: loginUser.userTel, // 구매자 전화번호 (필수항목)
+      buyer_email: loginUser.userEmail, // 구매자 이메일
+      buyer_addr: loginUser.userAddress,
     };
     IMP.request_pay(data, paymentCallback);
   }
@@ -52,38 +48,40 @@ const MyPay = () => {
     const { success, error_msg, imp_uid, merchant_uid, buyer_email, pay_method, paid_amount } = response;
 
     const result = await getPaymentId(imp_uid).then(() => {
-      if (result.data.response.amount === paid_amount)
+      if (result.data.response.amount === paid_amount){
         console.log('검증 완료')
-      else
-        swalErrorVerification();
+      }
+      else{
+        failPaymentVerification();
+      }
     }).catch(() => {
-      swalError();
+      informServerError();
     })
 
     //pay done
     if (success) {
       const formData = new FormData();
-      formData.append("payprice", paid_amount);
-      formData.append("seller", pwriter);
-      formData.append("buyer", loginUser.unickname);
-      formData.append("paytype", pay_method);
-      formData.append("payemail", buyer_email);
-      formData.append("paycode", merchant_uid);
-      formData.append("pcode", pcode);
+      formData.append("payPrice", paid_amount);
+      formData.append("paySeller", productWriter);
+      formData.append("payBuyer", loginUser.userNickname);
+      formData.append("payType", pay_method);
+      formData.append("payEmail", buyer_email);
+      formData.append("payCode", merchant_uid);
+      formData.append("productCode", productCode);
 
       //pay + review insert
-      await onPayment(formData).then(() => {
-        swalQueryReviewWrite().then(async (result) => {
+      await payProduct(formData).then(() => {
+        confirmWriterReview().then(async (result) => {
           if (result.isConfirmed)
-            navigate(`/my/review/insert/${merchant_uid}?seller=${pwriter}&buyer=${loginUser.unickname}&pcode=${pcode}`)
+            navigate(`/my/review/insert/${merchant_uid}?seller=${productWriter}&buyer=${loginUser.userNickname}&productCode=${productCode}`)
           else if (result.isDismissed)
             navigate('/my/menu')
         })
       }).catch(() => {
-        swalError();
+        informServerError();
       })
     } else {
-      swalErrorPayment(error_msg);
+      informFailedPayment(error_msg);
     }
   }
 
@@ -94,12 +92,12 @@ const MyPay = () => {
     iamport.src = "https://cdn.iamport.kr/js/iamport.payment-1.1.7.js";
     document.head.appendChild(jquery);
     document.head.appendChild(iamport);
-    extractReadData();
+    handleDataExtract();
     return () => {
       document.head.removeChild(jquery); document.head.removeChild(iamport);
     }
 
-  }, []);
+  }, [handleDataExtract]);
 
   return (
     <div className='pay'>
@@ -121,7 +119,7 @@ const MyPay = () => {
       </div>
 
       <Button variant="warning" style={{ width: '200px', height: '100px' }}
-        className='pay' onClick={onClickPayment}>결제하기</Button>
+        className='pay' onClick={handlePaymentClick}>결제하기</Button>
       <div className='animate__animated animate__fadeInUp'>
         <img
           size='10px'

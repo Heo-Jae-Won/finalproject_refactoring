@@ -12,7 +12,7 @@ import EventPage from './event/EventPage';
 import LoginPage from './login/LoginPage';
 import MyPage from './my/MyPage';
 import NoticePage from './notice/NoticePage';
-import PboardPage from './pboard/PboardPage';
+import ProductBoardPage from './product-board/ProductBoardPage';
 
 
 function App() {
@@ -24,7 +24,7 @@ function App() {
         <HeaderPage />
         <Routes>
           <Route path="/" element={<HomePage/>} />
-          <Route path="/pboard/*" element={<PboardPage/>} />
+          <Route path="/productBoard/*" element={<ProductBoardPage/>} />
           <Route path="/login/*" element={<LoginPage/>} />
           <Route path="/about" element={<AboutPage/>} />
           <Route path="/my/*" element={<MyPage/>} />

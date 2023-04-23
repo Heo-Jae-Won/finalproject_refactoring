@@ -1,8 +1,8 @@
 import React from 'react';
 import { Button } from 'react-bootstrap';
 
-const MyChatItem = ({ message, onDeleteMessage }) => {
-    const { text, date, uid, id, unickname, uprofile } = message;
+const MyChatItem = ({ message, handleMessageDelete }) => {
+    const { text, date, userId, id, userNickname, userProfile } = message;
 
 
 
@@ -10,9 +10,8 @@ const MyChatItem = ({ message, onDeleteMessage }) => {
         <>
             <div>
                 <p style={{ fontSize: 20 }}>
-                    {unickname}</p>
-
-                <img className='icon' src={uprofile}     alt="빈 이미지" />
+                    {userNickname}</p>
+                <img className='icon' src={userProfile}     alt="빈 이미지" />
 
                 <span className='chat_span'>{JSON.stringify(new Intl.DateTimeFormat('kr', { dateStyle: 'short', timeStyle: 'short' })
                     .format(date))}</span>
@@ -21,7 +20,7 @@ const MyChatItem = ({ message, onDeleteMessage }) => {
                 <p style={{ textAlign: 'left' }}>
                     {text}
                 </p>
-                {uid === sessionStorage.getItem('uid') && <Button className='mt-3' onClick={() => onDeleteMessage(id)}>삭제</Button>}
+                {userId === sessionStorage.getItem('userId') && <Button className='mt-3' onClick={() => handleMessageDelete(id)}>삭제</Button>}
             </div>
 
         </>

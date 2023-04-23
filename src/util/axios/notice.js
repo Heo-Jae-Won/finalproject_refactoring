@@ -1,8 +1,8 @@
 import { instance } from "./axios.util"
 
-export const getNoticeRead = (ncode) => {
+export const getNoticeRead = (noticeCode) => {
     return instance({
-        url: `/notice/${ncode}`,
+        url: `/notice/${noticeCode}`,
         method: 'get'
     })
 }

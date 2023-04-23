@@ -1,89 +1,73 @@
-import { Grid, TextField } from '@material-ui/core';
-import React, { useState } from 'react';
-import { Button, Card, Form, Row } from 'react-bootstrap';
-import { Link, useNavigate } from 'react-router-dom';
-import { onLogin } from '../util/axios/login';
-import { swalError } from '../util/swal/swal.basic.util';
-import { swalQueryRegisterId, swalWarnExistId, swalWarnExistPassword } from '../util/swal/swal.login.util';
+import { Grid, TextField } from "@material-ui/core";
+import React, { useState } from "react";
+import { Button, Card, Form, Row } from "react-bootstrap";
+import { Link, useNavigate } from "react-router-dom";
+import { confirmInsert } from "../util/swal/confirmation";
+import { informServerError } from "../util/swal/information";
+import { login } from "../util/axios/login";
+import { failDuplicationCheckUserId } from "../util/swal/service.exception";
 
 const LoginForm = () => {
   const navigate = useNavigate();
   const [form, setForm] = useState({
-    uid: '',
-    upass: '',
-    ucondition: ''
-  })
+    userId: "",
+    userPass: "",
+  });
 
+  const { userId, userPass } = form;
 
   const onChangeForm = (e) => {
-    setForm(prev => ({
+    setForm((prev) => ({
       ...prev,
-      [e.target.name]: e.target.value
-    }))
-  }
+      [e.target.name]: e.target.value,
+    }));
+  };
 
-  const onLoginSubmit = async (e) => {
+  const handleLogin = async (e) => {
     e.preventDefault();
 
     try {
-      const result = await onLogin(form);
+      const result = await login(form);
 
       //id x
-      if (result.data === 0) {
-        swalWarnExistId();
+      if (result.data === 0 || result.data === 3) {
+        failDuplicationCheckUserId();
         setForm({
-          ...form,
-          uid: ''
+          userId: "",
+          userPass: "",
         });
-
-        //password incorrect
-      } else if (result.data === 3) {
-        swalWarnExistPassword();
-        setForm({
-          ...form,
-          upass: ''
-        });
-
-        //deactivated member
-      } else if (result.data === 1) {
 
         //move to restore
-        swalQueryRegisterId().then(async (result) => {
-          if (result.isConfirmed)
-            navigate(`/login/restore/${form.uid}`);
-
-        })
+      } else if (result.data === 1) {
+        confirmInsert().then(async (result) => {
+          if (result.isConfirmed) {
+            navigate(`/login/restore/${userId}`);
+          }
+        });
 
         //login success
-      } else {
-        sessionStorage.setItem("uid", form.uid);
-        navigate('/')
+      } else if (result.data === 2) {
+        sessionStorage.setItem("userId", form.userId);
+        navigate("/");
       }
-
     } catch (e) {
-      swalError();
-
+      informServerError();
     }
-
-  }
-
-
+  };
 
   return (
     <div>
-      <Row className='d-flex justify-content-center my-5'>
-        <Card style={{ width: '30rem' }} className="p-3">
-          <Form onSubmit={onLoginSubmit}>
-
+      <Row className="d-flex justify-content-center my-5">
+        <Card style={{ width: "30rem" }} className="p-3">
+          <Form onSubmit={handleLogin}>
             <Grid item xs={12}>
               <TextField
                 variant="outlined"
                 required
                 fullWidth
-                id="unickname"
                 label="id"
-                value={form.uid}
-                name="uid"
+                value={userId}
+                name="userId"
                 onChange={onChangeForm}
               />
             </Grid>
@@ -95,27 +79,32 @@ const LoginForm = () => {
                 required
                 fullWidth
                 label="password"
-                value={form.upass}
-                name="upass"
+                value={userPass}
+                name="userPass"
                 type="password"
                 onChange={onChangeForm}
               />
             </Grid>
 
             <hr />
-            <Button type="submit" style={{ width: '30%' }}>로그인</Button>
+            <Button type="submit" style={{ width: "30%" }}>
+              로그인
+            </Button>
           </Form>
 
-          <div className='my-3'>
-            <Link style={{ marginRight: 110 }} to="/login/register">회원가입</Link>
-            <Link style={{ marginRight: 80 }} to="/login/findId">아이디 찾기</Link>
-            <Link to="/login/findpass">비밀번호 찾기</Link>
+          <div className="my-3">
+            <Link style={{ marginRight: 110 }} to="/login/register">
+              회원가입
+            </Link>
+            <Link style={{ marginRight: 80 }} to="/login/findId">
+              아이디 찾기
+            </Link>
+            <Link to="/login/findPass">비밀번호 찾기</Link>
           </div>
         </Card>
       </Row>
     </div>
-  )
-}
+  );
+};
 
-export default LoginForm
-
+export default LoginForm;

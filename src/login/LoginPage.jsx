@@ -13,9 +13,9 @@ const LoginPage = () => {
       <Routes>
         <Route path="/form" element={<LoginForm/>} />
         <Route path="/register" element={<LoginRegister/>} />
-        <Route path="/restore/:uid" element={<LoginRestore/>} />
-        <Route path="/findpass" element={<LoginFindPass/>} />
-        <Route path="/findid" element={<LoginFindId/>} />
+        <Route path="/restore/:userId" element={<LoginRestore/>} />
+        <Route path="/findPass" element={<LoginFindPass/>} />
+        <Route path="/findId" element={<LoginFindId/>} />
       </Routes>
     </div>
   )

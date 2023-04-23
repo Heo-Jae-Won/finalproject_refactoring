@@ -1,31 +1,29 @@
-import axios from 'axios';
 import { addDoc, collection, deleteDoc, doc, getFirestore, limit, onSnapshot, orderBy, query, where } from 'firebase/firestore';
 import qs from 'qs';
-import { default as React, useContext, useEffect, useState } from 'react';
+import { default as React, useCallback, useContext, useEffect, useState } from 'react';
 import { Button, Form, Row } from 'react-bootstrap';
 import { useLocation, useNavigate } from 'react-router-dom';
-import Swal from 'sweetalert2';
 import { UserContext } from '../context/UserContext';
 import { app } from '../fireStore';
-import { extractPboardRead } from '../util/axios/pboard';
-import { swalWarnLeaveChatroom, swalWarnMessageDelete } from '../util/swal/swal.my.util';
 import MyChatItem from './MyChatItem';
 import './MyChatList.css';
 import './MyChatList.scss';
+import { extractProductBoardRead } from '../util/axios/product.board';
+import { confirmDelete, confirmLeave } from '../util/swal/confirmation';
 
 const MyChatList = () => {
     const db = getFirestore(app);
     const location = useLocation();
     const navigate = useNavigate();
     const search = qs.parse(location.search, { ignoreQueryPrefix: true });
-    const [pcode, setPcode] = useState(search.pcode || 'ab');
-    const [Message, setMessage] = useState('');
+    const [productCode, setProductCode] = useState(search.productCode || 'ab');
+    const [message, setMessage] = useState('');
     const [messageList, setMessageList] = useState([]);
-    const [chatId, setChatId] = useState('unde');
-    const [pboardInfo, setPboardInfo] = useState({});
+    const [chatId, setChatId] = useState('init');
+    const [productBoardInfo, setProductBoardInfo] = useState({});
     const { loginUser } = useContext(UserContext);
 
-    const fetchRoomList = async () => {
+    const fetchRoomList = useCallback( async () => {
         const q = query(
             collection(db, `chatroom`),
             where('who', 'array-contains', sessionStorage.getItem('uid')),
@@ -51,13 +49,13 @@ const MyChatList = () => {
                         :
                         doc.data().who[0]}</h6>
                         <div class='text-small'>${doc.id}</div>
-                        <p class='text-small1'>${doc.data().pcode}</p>
-                        <img src=${JSON.stringify(doc.data().pimage)} width=70 height=70/>
+                        <p class='text-small1'>${doc.data().productCode}</p>
+                        <img src=${JSON.stringify(doc.data().productImage)} width=70 height=70/>
                 `;
 
 
                 //same chatId onclick ㅡ> duplicate x
-                if ((chatId.includes('unde') === true)) {
+                if (chatId.includes('init')) {
                     document.getElementsByClassName('list-group chat-list')[0].append(li);
                 }
             });
@@ -67,26 +65,23 @@ const MyChatList = () => {
             for (let i = 0; i < document.getElementsByClassName('list-group-item non-click').length; ++i) {
                 document.getElementsByClassName('list-group-item non-click')[i].addEventListener("click", function () {
                     setChatId(document.getElementsByClassName("text-small")[i].innerHTML)
-                    setPcode(document.getElementsByClassName("text-small1")[i].innerHTML)
+                    setProductCode(document.getElementsByClassName("text-small1")[i].innerHTML)
                 })
             }
-
-            extractPboardData();
+        (async () => {
+                const result = await extractProductBoardRead(productCode);
+                setProductBoardInfo(result.data);
+            })();
 
         });
 
-    }
+    },[chatId,db,productCode]);
 
 
 
 
 
-    const extractPboardData = async () => {
-        const result = await extractPboardRead(pcode);
-        setPboardInfo(result.data);
 
-
-    }
 
     const nonClick = document.querySelectorAll(".non-click");
 
@@ -97,7 +92,7 @@ const MyChatList = () => {
             nonClick.forEach((e) => {
                 e.classList.remove("click");
             });
-            // 클릭한 dom의 최상위요소만 "click"클래스 추가. 
+            // 클릭한 dom의 최상위요소만 "click"클래스 추가.
             e.currentTarget.classList.add("click");
         }
 
@@ -123,21 +118,21 @@ const MyChatList = () => {
                 return false; //  pre focus
             }
 
-            if (Message === '') {
+            if (!message) {
                 alert('메시지를 입력하세요')
                 return;
             }
 
 
 
-            const docRef = doc(db, 'chatroom', `${chatId}`);
-            const colRef = collection(docRef, 'messagelist')
+            const docRef = doc(db, 'chatRoom', `${chatId}`);
+            const colRef = collection(docRef, 'messageList')
             await addDoc(colRef, {
-                text: Message,
+                text: message,
                 date: new Date().getTime(),
-                uid: sessionStorage.getItem('uid'),
-                unickname: loginUser.unickname,
-                uprofile: loginUser.uprofile
+                userId: sessionStorage.getItem('uid'),
+                userNickname: loginUser.userNickname,
+                userProfile: loginUser.userProfile
             });
             setMessage('');
             window.scrollTo({
@@ -148,10 +143,10 @@ const MyChatList = () => {
         }
     }
 
-    const fetchMessageList = () => {
+    const fetchMessageList = useCallback(() => {
 
         const q = query(
-            collection(db, `chatroom/${chatId}/messagelist`),
+            collection(db, `chatRoom/${chatId}/messageList`),
             orderBy('date', 'asc'),
             limit(100)
         );
@@ -161,33 +156,33 @@ const MyChatList = () => {
             snapshot.forEach((doc) => {
                 rows.push({
                     id: doc.id,
-                    uid: doc.data().uid,
+                    userId: doc.data().uid,
                     text: doc.data().text,
                     date: doc.data().date,
-                    unickname: doc.data().unickname,
-                    uprofile: doc.data().uprofile
+                    userNickname: doc.data().userNickname,
+                    userProfile: doc.data().userProfile
                 });
             });
             setMessageList(rows);
         });
-    }
+    },[chatId,db])
 
-    const onDeleteMessage = async (id) => {
-        swalWarnMessageDelete().then(async (result) => {
+    const handleMessageDelete = async (id) => {
+        confirmDelete().then(async (result) => {
             if (result.isConfirmed) {
-                await deleteDoc(doc(db, `chatroom/${chatId}/messagelist`, id));
+                await deleteDoc(doc(db, `chatRoom/${chatId}/messageList`, id));
             }
         })
     }
 
-    const onDeleteChatroom = (id) => {
-        swalWarnLeaveChatroom().then(async (result) => {
+    const handleChatRoomDelete = (id) => {
+        confirmLeave().then(async (result) => {
             if (result.isConfirmed) {
 
-                //hack : if no use of setTimeout during chatroom exit, chatrooms duplication happen
-                setTimeout(() => deleteDoc(doc(db, `chatroom`, id)), 1000);
+                //hack : if no use of setTimeout during chatRoom exit, chatRooms duplication happen
+                setTimeout(() => deleteDoc(doc(db, `chatRoom`, id)), 1000);
                 document.getElementsByClassName('list-group-item non-click click')[0].remove();
-                navigate('/pboard/list')
+                navigate('/productBoard/list')
             }
         })
     }
@@ -195,7 +190,7 @@ const MyChatList = () => {
     useEffect(() => {
         fetchRoomList();
         fetchMessageList();
-    }, [chatId]);
+    }, [chatId, fetchMessageList, fetchRoomList]);
 
 
 
@@ -217,7 +212,7 @@ const MyChatList = () => {
                                 <div className={message.uid === sessionStorage.uid ? 'chat ch2' : 'chat ch1'}>
                                     <MyChatItem key={message.id}
                                         message={message}
-                                        onDeleteMessage={onDeleteMessage} />
+                                        handleMessageDelete={handleMessageDelete} />
                                 </div>
                             )}
                         </div>
@@ -226,17 +221,17 @@ const MyChatList = () => {
                             <Form className="d-flex my-3" style={{ width: '52rem' }}>
                                 <Form.Control
                                     as="textarea"
-                                    value={Message}
+                                    value={message}
                                     onChange={(e) => setMessage(e.target.value)}
                                     onKeyDown={sendMessage}
                                     placeholder='enter를 누르세요' className="mx-2" />
 
                             </Form>
                             <div>
-                                {((sessionStorage.getItem('uid') !== pboardInfo.uid) && (pboardInfo.pcondition === 0)) &&
-                                    <Button Button onClick={() => navigate(`/my/pay/${pcode}`)}>결제창 이동</Button>}
+                                {((sessionStorage.getItem('userId') !== productBoardInfo.userId) && (productBoardInfo.productStatus === 0)) &&
+                                    <Button Button onClick={() => navigate(`/my/pay/${productCode}`)}>결제창 이동</Button>}
                                 <Button style={{ marginLeft: 80 }} onClick={() => navigate(-1)}>뒤로가기</Button>
-                                <Button style={{ marginLeft: 80 }} onClick={() => onDeleteChatroom(chatId)}>채팅방 나가기</Button>
+                                <Button style={{ marginLeft: 80 }} onClick={() => handleChatRoomDelete(chatId)}>채팅방 나가기</Button>
                             </div>
                         </Row>
                     </li>}

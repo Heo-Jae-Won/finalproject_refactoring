@@ -1,46 +1,38 @@
-import axios from 'axios';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import React from 'react';
 import { Button } from 'react-bootstrap';
 import { useNavigate, useParams } from 'react-router-dom';
-import Swal from 'sweetalert2';
-import { onUserRestore } from '../util/axios/login';
-import { swalError } from '../util/swal/swal.basic.util';
-import { swalQueryRestoreUserId, swalSuccessRestore } from '../util/swal/swal.login.util';
+import { confirmRestore } from '../util/swal/confirmation';
+import { restoreUser } from '../util/axios/login';
+import { informServerError, informSuccess } from '../util/swal/information';
 
 const LoginRestore = () => {
-  const { uid } = useParams();
+  const { userId } = useParams();
   const navigate = useNavigate();
 
-  const OnRestore = () => {
-    swalQueryRestoreUserId().then(async (result) => {
+  const handleUserRestore = () => {
+    confirmRestore().then(async (result) => {
 
       if (result.isConfirmed) {
         const formData = new FormData();
-        formData.append("uid", uid);
+        formData.append("userId", userId);
 
-        await onUserRestore(formData).then(() => {
-          swalSuccessRestore()
+        await restoreUser(formData).then(() => {
+          informSuccess()
           navigate('/login/form');
         }).catch(() => {
-          swalError()
+          informServerError()
         })
 
       }
     })
   }
 
-
-
-
-
-
-
   return (
     <div>
       <img src='/image/fn.jpg' width={930} height={410} style={{ marginTop: 20 }} alt="빈 이미지" />
       <div style={{ marginTop: 50 }}>
-        <Button onClick={OnRestore}>계정복구</Button>
+        <Button onClick={handleUserRestore}>계정복구</Button>
       </div>
     </div>
   )

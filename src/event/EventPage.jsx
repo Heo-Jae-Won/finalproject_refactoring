@@ -9,7 +9,7 @@ const EventPage = () => {
     <div>
       <Routes>
         <Route path="/list" element={<EventList/>} />
-        <Route path="/read/:ecode" element={<EventRead/>} />
+        <Route path="/read/:eventCode" element={<EventRead/>} />
       </Routes>
     </div>
   )

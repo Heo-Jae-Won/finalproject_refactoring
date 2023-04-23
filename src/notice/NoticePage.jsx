@@ -9,7 +9,7 @@ const NoticePage = () => {
     <div>
       <Routes>
         <Route path="/list" element={<NoticeList/>} />
-        <Route path="/read/:ncode" element={<NoticeRead/>} />
+        <Route path="/read/:noticeCode" element={<NoticeRead/>} />
       </Routes>
     </div>
   )

@@ -1,26 +1,22 @@
-import axios from 'axios';
-import React, { useEffect, useState } from 'react';
-import Slider from 'react-slick';
+import React, { useEffect, useState } from "react";
+import Slider from "react-slick";
 import "slick-carousel/slick/slick-theme.css";
 import "slick-carousel/slick/slick.css";
-import BestItem from './BestItem';
 import "../Carousel.css";
-import { onPboardBest } from '../util/axios/basis';
-
+import BestItem from "./BestItem";
+import { getProductBoardBest } from "../util/axios/basis";
 const BestList = () => {
   const [bestList, setBestList] = useState([]);
 
-  //fetch 8 most liked item 
-  const fetchBest = async () => {
-    const result = await onPboardBest();
+  //fetch 8 most liked item
+  const fetchProductBoardBest = async () => {
+    const result = await getProductBoardBest();
     setBestList(result.data);
-  }
-
+  };
 
   useEffect(() => {
-    fetchBest();
-  }, [])
-
+    fetchProductBoardBest();
+  }, []);
 
   const settings = {
     dots: false,
@@ -30,28 +26,33 @@ const BestList = () => {
     slidesToScroll: 2,
     autoplay: true,
     autoPlaySpeed: 500,
-    nextArrow: <img src='../image/nextbutton_80863.png' alt='빈 이미지' width={50} height={50} />,
-    prevArrow: <img src='../image/backarrow1_80790.png' alt='빈 이미지' width={50} height={50} />
+    nextArrow: (
+      <img
+        src="../image/nextbutton_80863.png"
+        alt="빈 이미지"
+        width={50}
+        height={50}
+      />
+    ),
+    prevArrow: (
+      <img
+        src="../image/backarrow1_80790.png"
+        alt="빈 이미지"
+        width={50}
+        height={50}
+      />
+    ),
   };
 
-
-
-
-  if (!bestList)
-    return <h1>로딩중</h1>
+  if (!bestList) return <h1>로딩중</h1>;
 
   return (
     <Slider {...settings}>
-      {bestList.map(bestList =>
-        <BestItem key={bestList.pcode} bestList={bestList} />
-      )}
+      {bestList.map((bestList) => (
+        <BestItem key={bestList.productCode} bestList={bestList} />
+      ))}
     </Slider>
+  );
+};
 
-
-
-
-
-  )
-}
-
-export default BestList
+export default BestList;

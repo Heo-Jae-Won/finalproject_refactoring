@@ -5,6 +5,7 @@ import { Button, Spinner, Table } from 'react-bootstrap';
 import Pagination from 'react-js-pagination';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { getTradeSellList } from '../util/axios/my';
+import { useCallback } from 'react';
 
 const MySellList = () => {
     const navigate = useNavigate();
@@ -16,21 +17,21 @@ const MySellList = () => {
     const page = parseInt(search.page) || 1;
     const seller = search.seller;
 
-    const fetchSellList = async () => {
+    const fetchSellList =useCallback( async () => {
         setLoading(true);
         const result = await getTradeSellList(seller, page);
         setSellList(result.data.list);
         setTotal(result.data.total);
         setLoading(false);
-    }
+    },[page, seller]);
 
     useEffect(() => {
         fetchSellList();
-    }, [page])
+    }, [fetchSellList, page])
 
 
 
-    const onPageChange = (e) => {
+    const handlePageChange = (e) => {
         navigate(`/my/sell?page=${e}`)
         window.scrollTo({
             top: 0,
@@ -46,7 +47,7 @@ const MySellList = () => {
 
     return (
         <div>
-            <button style={{ marginTop: 30, float: 'left' }} onClick={() => navigate(`/my/sellchart?seller=${seller}`)}>판매내역 차트로 확인</button>
+            <button style={{ marginTop: 30, float: 'left' }} onClick={() => navigate(`/my/sellChart?seller=${seller}`)}>판매내역 차트로 확인</button>
             <Table striped className='mt-5'>
                 <thead>
                     <tr >
@@ -56,14 +57,14 @@ const MySellList = () => {
                     </tr>
                 </thead>
                 <tbody>
-                    {sellList?.map(list =>
+                    {sellList?.map(sellList =>
                         <>
-                            <tr key={list.paycode}>
-                                <td>{list.payprice}</td>
-                                <td>{list.regDate}</td>
-                                {(list.sellercondition === 0) ?
+                            <tr key={sellList.payCode}>
+                                <td>{sellList.payPrice}</td>
+                                <td>{sellList.payRegDate}</td>
+                                {(sellList.paySellerReview === 0) ?
                                     /* todo: buyer=seller, seller=buyer로 거꾸로 바꿔주기만 하면 seller가 buyer에 관한 리뷰를 쓸 수 있음. */
-                                    <td><Button onClick={() => navigate(`/my/review/insert/${list.paycode}?buyer=${list.seller}&seller=${list.buyer}&pcode=${list.pcode}`)}>
+                                    <td><Button onClick={() => navigate(`/my/review/insert/${sellList.payCode}?buyer=${sellList.seller}&seller=${sellList.buyer}&productCode=${sellList.productCode}`)}>
                                         후기쓰러가기</Button></td>
                                     :
                                     <td>후기 작성 완료</td>}
@@ -81,7 +82,7 @@ const MySellList = () => {
                     pageRangeDisplayed={10}
                     prevPageText={"‹"}
                     nextPageText={"›"}
-                    onChange={(e) => onPageChange(e)}
+                    onChange={(e) => handlePageChange(e)}
                 /> </div> : <div style={{ marginTop: 200 }}>
                 <h1 style={{ fontSize: 60, color: 'red', marginBottom: 200 }}>해당 검색 결과가 존재하지 않습니다.</h1>
             </div>}

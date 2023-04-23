@@ -1,32 +1,29 @@
 import { Grid, TextField } from '@material-ui/core';
 import { Rating } from '@mui/material';
-import axios from 'axios';
 import qs from 'qs';
 import React, { useState } from 'react';
-import { Button, Card, ButtonGroup, Form, Row } from 'react-bootstrap';
+import { Button, ButtonGroup, Card, Form, Row } from 'react-bootstrap';
 import { useLocation, useNavigate, useParams } from 'react-router-dom';
-import Swal from 'sweetalert2';
-import { onReviewInsert } from '../util/axios/my';
-import { swalError, swalSuccessInsert } from '../util/swal/swal.basic.util';
-import { swalErrorNonExistPayment } from '../util/swal/swal.my.util';
+import { informNoPayment, informServerError, informSuccess } from '../util/swal/information';
+import { insertReview } from '../util/axios/my/review';
 
 const MyInsertReview = () => {
   const [point, setPoint] = useState(5);
   const location = useLocation();
   const navigate = useNavigate();
-  const { paycode } = useParams();
+  const { payCode } = useParams();
   const search = qs.parse(location.search, { ignoreQueryPrefix: true });
   const seller = search.seller;
   const buyer = search.buyer;
-  const pcode = search.pcode;
+  const productCode = search.productCode;
 
   const [form, setForm] = useState({
-    rvcontent: '',
-    sender: buyer,
-    receiver: seller
+    reviewContent: '',
+    reviewSender: buyer,
+    reviewReceiver: seller
   });
 
-  const { rvcontent, receiver, sender } = form;
+  const { reviewContent, reviewReceiver, reviewSender } = form;
 
   const onChangeForm = (e) => {
     setForm(prev => ({
@@ -35,28 +32,28 @@ const MyInsertReview = () => {
     }))
   }
 
-  const onInsert = async () => {
+  const handleReviewInsert = async () => {
     const formData = new FormData();
-    formData.append("rvcontent", rvcontent);
-    formData.append("sender", sender);
-    formData.append("receiver", receiver);
+    formData.append("reviewContent", reviewContent);
+    formData.append("reviewSender", reviewSender);
+    formData.append("reviewReceiver", reviewReceiver);
     formData.append("point", point);
-    formData.append("paycode", paycode);
-    formData.append("pcode", pcode);
+    formData.append("payCode", payCode);
+    formData.append("productCode", productCode);
 
     //review insert
     try {
-      const result = await onReviewInsert(formData);
+      const result = await insertReview(formData);
 
       if (result.data === 1) {
-        swalSuccessInsert();
+        informSuccess();
         navigate('/my/menu')
       } else {
-        swalErrorNonExistPayment();
+        informNoPayment();
       }
 
     } catch (e) {
-      swalError();
+      informServerError();
     }
   }
 
@@ -71,8 +68,8 @@ const MyInsertReview = () => {
               variant="outlined"
               required
               fullWidth
-              value={sender}
-              name="sender"
+              value={reviewSender}
+              name="reviewSender"
               inputProps={
                 { readOnly: true, }
               }
@@ -87,8 +84,8 @@ const MyInsertReview = () => {
               required
               fullWidth
               label="내용"
-              value={rvcontent}
-              name="rvcontent"
+              value={reviewContent}
+              name="reviewContent"
               onChange={onChangeForm}
             />
           </Grid>
@@ -102,8 +99,8 @@ const MyInsertReview = () => {
               required
               fullWidth
               label='리뷰 대상자'
-              value={receiver}
-              name="receiver"
+              value={reviewReceiver}
+              name="reviewReceiver"
               onChange={onChangeForm}
               inputProps={
                 { readOnly: true, }
@@ -125,8 +122,8 @@ const MyInsertReview = () => {
 
           <div style={{ marginTop: 30 }}>
             <ButtonGroup>
-              <Button onClick={onInsert} style={{ width: '40%', margintTop: 300, marginRight: 90 }}>지금 <br />등록</Button>
-              <Button onClick={() => navigate('/my/menu')} style={{ width: '40%', margintTop: 300 }}>나중에 등록</Button>
+              <Button onClick={handleReviewInsert} style={{ width: '40%', marginTop: 300, marginRight: 90 }}>지금 <br />등록</Button>
+              <Button onClick={() => navigate('/my/menu')} style={{ width: '40%', marginTop: 300 }}>나중에 등록</Button>
             </ButtonGroup>
           </div>
         </Form>
