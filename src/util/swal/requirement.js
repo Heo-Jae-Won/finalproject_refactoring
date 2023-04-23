@@ -2,8 +2,8 @@ import Swal from 'sweetalert2'
 
 export const requireInput = () => {
     return Swal.fire({
-         text: "해당 항목은 필수 항목입니다.",
-         icon: 'info',
+         text: "비어있는 항목이 존재합니다.",
+         icon: 'warning',
          confirmButtonColor: '#3085d6',
          cancelButtonColor: '#d33',
      })

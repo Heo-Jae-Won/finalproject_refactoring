@@ -1,8 +1,8 @@
 import React from 'react'
 import { Route, Routes } from 'react-router-dom'
-import ProductBoardList from '../productboard/ProductBoardList'
 import ProductBoardRead from './ProductBoardRead'
-import ProductBoardInsert from '../productboard/ProductBoardInsert'
+import ProductBoardList from './ProductBoardList'
+import ProductBoardInsert from './ProductBoardInsert'
 
 const ProductBoardPage = () => {
   return (
@@ -10,7 +10,7 @@ const ProductBoardPage = () => {
       <Routes>
         <Route path="/list" element={<ProductBoardList/>} />
         <Route path="/read/:productCode" element={<ProductBoardRead/>} />
-        <Route path="/insert/:userNickName" element={<ProductBoardInsert/>} />
+        <Route path="/insert/:userNickname" element={<ProductBoardInsert/>} />
       </Routes>
     </div>
   )

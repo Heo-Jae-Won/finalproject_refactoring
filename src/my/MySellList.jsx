@@ -1,11 +1,9 @@
-import axios from 'axios';
 import qs from 'qs';
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { Button, Spinner, Table } from 'react-bootstrap';
 import Pagination from 'react-js-pagination';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { getTradeSellList } from '../util/axios/my';
-import { useCallback } from 'react';
+import { getTradeSellList } from '../util/axios/my/trade';
 
 const MySellList = () => {
     const navigate = useNavigate();

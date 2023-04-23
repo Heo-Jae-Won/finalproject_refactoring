@@ -1,15 +1,13 @@
-import axios from 'axios';
-import React, { useContext, useEffect, useState } from 'react';
+import React, { useCallback, useContext, useEffect, useState } from 'react';
 import { Alert, Button, Form, Row, Spinner } from 'react-bootstrap';
 import DaumPostcodeEmbed from 'react-daum-postcode';
 import { useNavigate, useParams } from 'react-router-dom';
 import { UserContext } from '../context/UserContext';
-import { useCallback } from 'react';
-import { requireInput, requireValidationPass } from '../util/swal/requirement';
 import { getUserId, getUserNickname, getUserStatus, updateUserInfo } from '../util/axios/my/user';
 import { checkEmailValid, checkPhoneNumberValid } from '../util/regex/regex';
 import { confirmDeactivate, confirmUpdate } from '../util/swal/confirmation';
 import { informServerError, informSuccess } from '../util/swal/information';
+import { requireInput, requireValidationPass } from '../util/swal/requirement';
 
 const MyInfo = () => {
   const { loginUser, setLoginUser } = useContext(UserContext);

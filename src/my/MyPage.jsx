@@ -7,10 +7,10 @@ import MyInfo from './MyInfo'
 import MyInsertReview from './MyInsertReview'
 import MyMenu from './MyMenu'
 import MyPay from './MyPay'
-import MyReceiveReview from './MyReceiveReview'
 import MySellList from './MySellList'
 import MySellListChart from './MySellListChart'
 import MyUpdatePass from './MyUpdatePass'
+import MyReceiveReviewList from './MyReceiveReviewList'
 
 const MyPage = () => {
   return (
@@ -20,7 +20,7 @@ const MyPage = () => {
         <Route path="/chat" element={<MyChatList/>} />
         <Route path="/pay/:productCode" element={<MyPay/>} />
         <Route path="/menu" element={<MyMenu/>} />
-        <Route path="/review" element={<MyReceiveReview/>}/>
+        <Route path="/review" element={<MyReceiveReviewList/>}/>
         <Route path="/review/insert/:payCode" element={<MyInsertReview/>} />
         <Route path="/pass/update" element={<MyUpdatePass/>} />
         <Route path="/sell" element={<MySellList/>} />

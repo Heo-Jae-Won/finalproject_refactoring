@@ -21,7 +21,7 @@ const MyUpdatePass = () => {
 
     const { userId, userPass } = form;
 
-    const onChangeForm = (e) => {
+    const handleFormChange = (e) => {
         setForm(prev => ({
             ...prev,
             [e.target.name]: e.target.value
@@ -29,7 +29,7 @@ const MyUpdatePass = () => {
     }
 
     //validate password
-    const onValidatePass = async (e) => {
+    const handlePassValidate = async (e) => {
         e.preventDefault();
         if (!confirmPassword) {
             requireInput();
@@ -91,7 +91,7 @@ const MyUpdatePass = () => {
                             value={userPass}
                             name="userPass"
                             type="password"
-                            onChange={onChangeForm}
+                            onChange={handleFormChange}
                         />
                     </Grid>
 
@@ -110,7 +110,7 @@ const MyUpdatePass = () => {
                             onChange={(e) => setConfirmPassword(e.target.value)}
                         />
                     </Grid>
-                    <Button onClick={onValidatePass} className='mt-3'>패스워드 일치 확인</Button>
+                    <Button onClick={handlePassValidate} className='mt-3'>패스워드 일치 확인</Button>
 
                     <Button onClick={isChecked === true ? handlePasswordUpdate :
                         requireEqualityPassword} className='mt-3'>비밀번호 변경</Button>

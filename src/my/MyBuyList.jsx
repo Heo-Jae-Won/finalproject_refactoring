@@ -1,11 +1,9 @@
-import axios from 'axios';
 import qs from 'qs';
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { Button, Spinner, Table } from 'react-bootstrap';
 import Pagination from 'react-js-pagination';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { getTradeBuyList } from '../util/axios/my';
-import { useCallback } from 'react';
+import { getTradeBuyList } from '../util/axios/my/trade';
 
 const MyBuyList = () => {
   const location=useLocation();
@@ -47,7 +45,7 @@ const MyBuyList = () => {
 
   return (
     <div>
-      <button style={{ marginTop: 30, float: 'left' }} onClick={() => navigate(`/my/buychart?buyer=${buyer}`)}>구매내역 차트로 확인</button>
+      <button style={{ marginTop: 30, float: 'left' }} onClick={() => navigate(`/my/buyChart?buyer=${buyer}`)}>구매내역 차트로 확인</button>
       <Table striped className='mt-5'>
         <thead>
           <tr >
@@ -59,12 +57,11 @@ const MyBuyList = () => {
         <tbody>
           {buyList.map(list =>
             <>
-              <tr key={list.paycode}>
-                <td>{list.payprice}</td>
+              <tr key={list.payCode}>
+                <td>{list.payPrice}</td>
                 <td>{list.regDate}</td>
-                {(list.buyercondition === 0) ?
-                  /* buyer=seller, seller=buyer로 거꾸로 바꿔주기만 하면 seller가 buyer에 관한 리뷰를 쓸 수 있음. */
-                  <td><Button onClick={() => navigate(`/my/review/insert/${list.paycode}?buyer=${list.buyer}&seller=${list.seller}&pcode=${list.pcode}`)}>
+                {(list.payBuyerReview === 0) ?
+                  <td><Button onClick={() => navigate(`/my/review/insert/${list.payCode}?buyer=${list.buyer}&seller=${list.seller}&productCode=${list.productCode}`)}>
                     후기쓰러가기</Button></td>
                   :
                   <td>후기 작성완료</td>

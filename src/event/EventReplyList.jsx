@@ -5,25 +5,24 @@ import Pagination from "react-js-pagination";
 import { UserContext } from "../context/UserContext";
 import "../Pagination.css";
 import { deleteReply, getReplyList, insertReply } from "../util/axios/event";
-import {
-  swalError,
-  swalQueryDelete,
-  swalSuccessDelete,
-} from "../util/swal/confirmation";
 import { useCallback } from "react";
+import { informServerError, informSuccess } from "../util/swal/information";
+import { confirmDelete } from "../util/swal/confirmation";
 
 const EventReplyList = ({ eventCode }) => {
   const { loginUser } = useContext(UserContext);
-  const [list, setList] = useState([]);
+  const [eventReplyList, setEventReplyList] = useState([]);
   const [page, setPage] = useState(1);
-  const [total, setTotal] = useState(0);
+  const [eventReplyTotal, setEventReplyTotal] = useState(0);
   const [eventReplyContent, setEventReplyContent] = useState("");
   const num = 6;
 
   const fetchEventReplyList = useCallback( async () => {
+    console.log(eventCode);
     const result = await getReplyList(eventCode, page, num);
-    setList(result.data.list);
-    setTotal(result.data.total);
+    setEventReplyList(result.data.eventReplyList);
+    setEventReplyTotal(result.data.eventReplyTotal);
+    console.log(result.data.eventReplyList);
   },[eventCode, page]);
 
   useEffect(() => {
@@ -32,7 +31,7 @@ const EventReplyList = ({ eventCode }) => {
 
   const handleReplyInsert = async (e) => {
     if (e.keyCode === 13) {
-      if (eventReplyContent === "") {
+      if (!eventReplyContent) {
         alert("내용을 입력해 주세요!");
         return;
       }
@@ -60,21 +59,21 @@ const EventReplyList = ({ eventCode }) => {
           setEventReplyContent("");
         })
         .catch(() => {
-          swalError();
+          informServerError();
         });
     }
   };
 
   const handleReplyDelete = async (eventReplyCode) => {
-    swalQueryDelete().then(async (result) => {
+    confirmDelete().then(async (result) => {
       if (result.isConfirmed) {
         await deleteReply(eventReplyCode)
           .then(() => {
-            swalSuccessDelete();
+            informSuccess();
             fetchEventReplyList();
           })
           .catch(() => {
-            swalError();
+            informServerError();
           });
       }
     });
@@ -89,11 +88,10 @@ const EventReplyList = ({ eventCode }) => {
     });
   };
 
-  if (!list) return <h1>Loading......</h1>;
 
   return (
     <div>
-      {sessionStorage.getItem("uid") && (
+      {sessionStorage.getItem("userId") && (
         <Form>
           <Form.Label
             classNameName="d-flex justify-content-left"
@@ -113,7 +111,7 @@ const EventReplyList = ({ eventCode }) => {
       )}
 
       <hr />
-      {list?.map((reply) => (
+      {eventReplyList?.map((reply) => (
         <div
           className="u_cbox_comment_box u_cbox_type_profile"
           key={reply.eventReplyCode}
@@ -143,7 +141,7 @@ const EventReplyList = ({ eventCode }) => {
         <Pagination
           activePage={page}
           itemsCountPerPage={num}
-          totalItemsCount={total}
+          totalItemsCount={eventReplyTotal}
           pageRangeDisplayed={5}
           prevPageText={"‹"}
           nextPageText={"›"}

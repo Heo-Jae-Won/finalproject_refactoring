@@ -4,7 +4,7 @@ import { Alert, Button, Card, Form, Row } from 'react-bootstrap';
 import { useNavigate } from 'react-router-dom';
 import { sendTempPassword } from '../util/axios/login';
 import { informDuplicationPassedUserId, informSendingTempPassword, informServerError } from '../util/swal/information';
-import { requireInput, requireValidation } from '../util/swal/requirement';
+import { requireInput, requireValidationPass } from '../util/swal/requirement';
 import { failFindUserEmail } from '../util/swal/service.exception';
 import { checkEmailValid } from '../util/regex/regex';
 
@@ -34,7 +34,7 @@ const LoginFindPass = () => {
     }
 
     if (!checkEmailValid(userEmail)) {
-      requireValidation();
+      requireValidationPass();
       return;
     }
 

@@ -2,7 +2,7 @@ import React, { useCallback, useContext, useEffect, useState } from 'react';
 import { Button, ButtonGroup, Card, Col, Nav } from 'react-bootstrap';
 import { useNavigate } from 'react-router-dom';
 import { UserContext } from '../context/UserContext';
-import { getProductBoardLikeUser, onDislikeClicked } from '../util/axios/product.board';
+import { getProductBoardLikeByUser, onClickDislike } from '../util/axios/product.board';
 
 const ProductBoardItem = ({ postList, fetchProductLikeCnt }) => {
   const navigate = useNavigate();
@@ -12,7 +12,7 @@ const ProductBoardItem = ({ postList, fetchProductLikeCnt }) => {
 
   //productLikeCnt on productBoardItem + truth of user whether click like or not 
   const fetchLikeList = useCallback(async () => {
-    const result = await getProductBoardLikeUser(productCode, loginUser.userNickname)
+    const result = await getProductBoardLikeByUser(productCode, loginUser.userNickname)
 
     //initial state of productLikeCnt = false
     setIsClickedLike(result.data.likeStatus || false);
@@ -33,9 +33,9 @@ const ProductBoardItem = ({ postList, fetchProductLikeCnt }) => {
     }
 
     isClickedLike === false ?
-      await onDislikeClicked(data)
+      await onClickDislike(data)
       :
-      await onDislikeClicked(data);
+      await onClickDislike(data);
 
     setIsClickedLike(!isClickedLike);
     fetchProductLikeCnt();

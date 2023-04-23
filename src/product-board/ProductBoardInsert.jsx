@@ -5,7 +5,8 @@ import { useNavigate, useParams } from 'react-router-dom'
 import { informSuccess } from '../util/swal/information'
 import { confirmInsert } from '../util/swal/confirmation'
 import { insertProductBoard } from '../util/axios/product.board'
-import { swalAlertFileUploadTypeError } from '../util/swal/service.exception'
+import { failFileUploadByType } from '../util/swal/service.exception'
+import { requireInput } from '../util/swal/requirement'
 
 const ProductBoardInsert = () => {
     const { userNickname } = useParams();
@@ -38,6 +39,10 @@ const ProductBoardInsert = () => {
     }
 
     const handleProductBoardInsert = async () => {
+        if(!file)   {
+            requireInput();
+            return;
+        }
 
         const formData = new FormData();
         formData.append("file", file);
@@ -57,8 +62,8 @@ const ProductBoardInsert = () => {
                     informSuccess();
                     navigate('/productBoard/list')
                 }).catch((error) => {
-                   if(error.response.data.includes("imagefile only accepted for jpeg,png")){
-                       swalAlertFileUploadTypeError();
+                   if(error.response.data.includes("image file only accepted for jpeg,png")){
+                       failFileUploadByType();
                    }
                 })
 

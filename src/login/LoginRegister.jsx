@@ -20,6 +20,7 @@ import {
   failFileUploadByType,
 } from "../util/swal/service.exception";
 import {
+  informDuplicationUserNicknamePass,
   informFailedAuthentication,
   informNotEqualPassword,
   informSuccess,
@@ -86,7 +87,7 @@ const LoginRegister = () => {
     }
 
     const result = await checkDuplicationUserNickname(userNickname);
-    result.data === 1 ? informSuccess() : failDuplicationCheckUserNickname();
+    result.data === 1 ? informDuplicationUserNicknamePass() : failDuplicationCheckUserNickname();
   };
 
   const confirmEqualPassword = () => {
@@ -292,9 +293,9 @@ const LoginRegister = () => {
                 required
                 fullWidth
                 label="가입자 이름"
-                value={userNickname}
-                name="userNickname"
-                autoComplete="userNickname"
+                value={userName}
+                name="userName"
+                autoComplete="userName"
                 onChange={handleFormChange}
               />
             </Grid>

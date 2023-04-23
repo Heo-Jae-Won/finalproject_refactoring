@@ -23,7 +23,7 @@ const LoginFindId = () => {
   const handleUserIdFind = async (e) => {
     e.preventDefault();
 
-    if (userEmail) {
+    if (!userEmail) {
       requireInput();
       return;
     }
@@ -31,11 +31,11 @@ const LoginFindId = () => {
     try {
       const result = await findUserId(userEmail, userName);
 
-      if (result.data) {
-        setForm((form) => ({
-          ...form,
+      if (!result.data) {
+        setForm({
+          userName: "",
           userEmail: "",
-        }));
+        });
         setMessage("검색된 아이디가 없습니다");
       } else {
         setMessage("아이디는 " + result.data + "입니다");
@@ -55,7 +55,7 @@ const LoginFindId = () => {
                 variant="outlined"
                 required
                 fullWidth
-                label="name"
+                label="이름"
                 value={userName}
                 name="userName"
                 onChange={handleFormChange}
@@ -68,7 +68,7 @@ const LoginFindId = () => {
                 variant="outlined"
                 required
                 fullWidth
-                label="email"
+                label="이메일"
                 value={userEmail}
                 name="userEmail"
                 onChange={handleFormChange}

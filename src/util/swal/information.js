@@ -7,6 +7,14 @@ export const informSuccess = () => {
      })
  }
 
+ export const informDuplicationUserNicknamePass = () => {
+    return Swal.fire({
+         text: "해당 닉네임은 사용가능한 닉네임입니다.",
+         icon: 'success',
+         confirmButtonColor: '#3085d6',
+     })
+ }
+
 export const informServerError = () => {
    return Swal.fire({
         text: "예상치 못한 오류가 발생하였습니다",

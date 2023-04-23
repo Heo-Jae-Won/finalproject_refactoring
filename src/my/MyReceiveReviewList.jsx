@@ -1,7 +1,6 @@
 import { Rating } from "@mui/material";
-import axios from "axios";
 import qs from "qs";
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { Spinner } from "react-bootstrap";
 import Table from "react-bootstrap/Table";
 import Pagination from "react-js-pagination";
@@ -9,7 +8,6 @@ import { useLocation, useNavigate } from "react-router-dom";
 import "../Pagination.css";
 import { getReceivedReview } from "../util/axios/my/review";
 import { informServerError } from "../util/swal/information";
-import { useCallback } from "react";
 
 const MyReceiveReviewList = () => {
   const location = useLocation();
