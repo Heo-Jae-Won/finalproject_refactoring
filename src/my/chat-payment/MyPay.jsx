@@ -1,12 +1,12 @@
 import React, { useCallback, useContext, useEffect, useState } from 'react';
 import { Button } from 'react-bootstrap';
 import { useNavigate, useParams } from 'react-router-dom';
-import { UserContext } from '../context/UserContext';
-import { getPaymentId, payProduct } from '../util/axios/my/payment';
-import { extractProductBoardRead } from '../util/axios/product.board';
-import { confirmWriterReview } from '../util/swal/confirmation';
-import { informFailedPayment, informServerError } from '../util/swal/information';
-import { failPaymentVerification } from '../util/swal/service.exception';
+import { UserContext } from '../../context/UserContext';
+import { getPaymentId, payProduct } from '../../util/axios/my/payment';
+import { extractProductBoardRead } from '../../util/axios/product.board';
+import { confirmWriterReview } from '../../util/swal/confirmation';
+import { informFailedPayment, informServerError } from '../../util/swal/information';
+import { failPaymentVerification } from '../../util/swal/service.exception';
 
 const MyPay = () => {
   const { loginUser } = useContext(UserContext);

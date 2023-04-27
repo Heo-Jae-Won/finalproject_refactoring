@@ -4,8 +4,8 @@ import qs from 'qs';
 import React, { useState } from 'react';
 import { Button, ButtonGroup, Card, Form, Row } from 'react-bootstrap';
 import { useLocation, useNavigate, useParams } from 'react-router-dom';
-import { informNoPayment, informServerError, informSuccess } from '../util/swal/information';
-import { insertReview } from '../util/axios/my/review';
+import { informNoPayment, informServerError, informSuccess } from '../../util/swal/information';
+import { insertReview } from '../../util/axios/my/review';
 
 const MyInsertReview = () => {
   const [point, setPoint] = useState(5);

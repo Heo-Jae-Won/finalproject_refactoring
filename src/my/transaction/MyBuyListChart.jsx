@@ -2,7 +2,7 @@ import qs from "qs";
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import Chart from "react-google-charts";
 import { useLocation } from "react-router-dom";
-import { getTradeBuyChart } from "../util/axios/my/trade";
+import { getTradeBuyChart } from "../../util/axios/my/trade";
 
 const MyBuyListChart = () => {
   const location = useLocation();

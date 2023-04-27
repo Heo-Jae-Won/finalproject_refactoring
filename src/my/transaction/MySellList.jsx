@@ -3,7 +3,7 @@ import React, { useCallback, useEffect, useState } from 'react';
 import { Button, Spinner, Table } from 'react-bootstrap';
 import Pagination from 'react-js-pagination';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { getTradeSellList } from '../util/axios/my/trade';
+import { getTradeSellList } from '../../util/axios/my/trade';
 
 const MySellList = () => {
     const navigate = useNavigate();
@@ -61,7 +61,6 @@ const MySellList = () => {
                                 <td>{sellList.payPrice}</td>
                                 <td>{sellList.payRegDate}</td>
                                 {(sellList.paySellerReview === 0) ?
-                                    /* todo: buyer=seller, seller=buyer로 거꾸로 바꿔주기만 하면 seller가 buyer에 관한 리뷰를 쓸 수 있음. */
                                     <td><Button onClick={() => navigate(`/my/review/insert/${sellList.payCode}?buyer=${sellList.seller}&seller=${sellList.buyer}&productCode=${sellList.productCode}`)}>
                                         후기쓰러가기</Button></td>
                                     :

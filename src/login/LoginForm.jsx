@@ -3,7 +3,7 @@ import React, { useState } from "react";
 import { Button, Card, Form, Row } from "react-bootstrap";
 import { Link, useNavigate } from "react-router-dom";
 import { confirmInsert } from "../util/swal/confirmation";
-import { informServerError } from "../util/swal/information";
+import { informDuplicationPassedUserId, informServerError } from "../util/swal/information";
 import { login } from "../util/axios/login";
 import { failDuplicationCheckUserId } from "../util/swal/service.exception";
 
@@ -31,7 +31,7 @@ const LoginForm = () => {
 
       //id x
       if (result.data === 0 || result.data === 3) {
-        failDuplicationCheckUserId();
+        informDuplicationPassedUserId();
         setForm({
           userId: "",
           userPass: "",

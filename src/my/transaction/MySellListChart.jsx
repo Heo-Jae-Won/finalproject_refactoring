@@ -2,7 +2,7 @@ import qs from "qs";
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import Chart from "react-google-charts";
 import { useLocation } from "react-router-dom";
-import { getTradeSellChart } from "../util/axios/my/trade";
+import { getTradeSellChart } from "../../util/axios/my/trade";
 
 const MySellListChart = () => {
   const search = qs.parse(useLocation().search, { ignoreQueryPrefix: true });

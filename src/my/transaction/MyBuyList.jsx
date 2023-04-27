@@ -3,7 +3,7 @@ import React, { useCallback, useEffect, useState } from 'react';
 import { Button, Spinner, Table } from 'react-bootstrap';
 import Pagination from 'react-js-pagination';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { getTradeBuyList } from '../util/axios/my/trade';
+import { getTradeBuyList } from '../../util/axios/my/trade';
 
 const MyBuyList = () => {
   const location=useLocation();

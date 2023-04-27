@@ -5,9 +5,8 @@ import { Spinner } from "react-bootstrap";
 import Table from "react-bootstrap/Table";
 import Pagination from "react-js-pagination";
 import { useLocation, useNavigate } from "react-router-dom";
-import "../Pagination.css";
-import { getReceivedReview } from "../util/axios/my/review";
-import { informServerError } from "../util/swal/information";
+import { getReceivedReview } from "../../util/axios/my/review";
+import { informServerError } from "../../util/swal/information";
 
 const MyReceiveReviewList = () => {
   const location = useLocation();

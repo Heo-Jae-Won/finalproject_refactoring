@@ -3,13 +3,13 @@ import qs from 'qs';
 import { default as React, useCallback, useContext, useEffect, useState } from 'react';
 import { Button, Form, Row } from 'react-bootstrap';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { UserContext } from '../context/UserContext';
-import { app } from '../fireStore';
+import { UserContext } from '../../context/UserContext';
+import { app } from '../../fireStore';
 import MyChatItem from './MyChatItem';
 import './MyChatList.css';
 import './MyChatList.scss';
-import { extractProductBoardRead } from '../util/axios/product.board';
-import { confirmDelete, confirmLeave } from '../util/swal/confirmation';
+import { extractProductBoardRead } from '../../util/axios/product.board';
+import { confirmDelete, confirmLeave } from '../../util/swal/confirmation';
 
 const MyChatList = () => {
     const db = getFirestore(app);

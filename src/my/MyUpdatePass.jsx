@@ -3,11 +3,11 @@ import React, { useContext, useState } from 'react';
 import { Button, Card, Row } from 'react-bootstrap';
 import { useNavigate } from 'react-router-dom';
 import { UserContext } from '../context/UserContext';
-import { requireEqualityPassword, requireInput, requireValidationPass } from '../util/swal/requirement';
-import { checkPasswordValid } from '../util/regex/regex';
-import { informEqualPassword, informNotEqualPassword, informSuccess } from '../util/swal/information';
-import { confirmUpdate } from '../util/swal/confirmation';
 import { updatePassword } from '../util/axios/my/user';
+import { checkPasswordValid } from '../util/regex/regex';
+import { confirmUpdate } from '../util/swal/confirmation';
+import { informEqualPassword, informNotEqualPassword, informSuccess } from '../util/swal/information';
+import { requireEqualityPassword, requireInput, requireValidationPass } from '../util/swal/requirement';
 const MyUpdatePass = () => {
     const navigate = useNavigate();
     const [confirmPassword, setConfirmPassword] = useState('')

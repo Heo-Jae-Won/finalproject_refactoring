@@ -1,6 +1,5 @@
 import { Grid, MenuItem, TextField } from "@material-ui/core";
 import { getMonth, getYear } from "date-fns";
-import range from "lodash/range";
 import React, { useState } from "react";
 import { Alert, Button, Card, Form, Row } from "react-bootstrap";
 import ReactDatePicker from "react-datepicker";
@@ -28,6 +27,7 @@ import {
 } from "../util/swal/information";
 import { confirmInsert } from "../util/swal/confirmation";
 import { checkEmailValid, checkPasswordValid, checkPhoneNumberValid } from "../util/regex/regex";
+import { range } from "range";
 
 const years = range(1930, getYear(new Date()) + 1, 1);
 const months = [
