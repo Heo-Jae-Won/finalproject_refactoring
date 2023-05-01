@@ -4,6 +4,7 @@ import { range } from "range";
 import React from 'react';
 import ReactDatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
+import { useBirthStore } from "../model/birth.store";
 const years = range(1930, getYear(new Date()) + 1, 1);
 const months = [
   "January",
@@ -21,6 +22,9 @@ const months = [
 ];
 
 const Birth = () => {
+  const changeBirth=useBirthStore((state)=>state.changeBirth);
+  const birth=useBirthStore((state)=>state.birth);
+
   return (
     <div>
           <Grid item xs={12}>
@@ -79,9 +83,9 @@ const Birth = () => {
                     </button>
                   </div>
                 )}
-                selected={userBirth}
+                selected={birth}
                 maxDate={new Date()}
-                onChange={(date) => setUserBirth(date)}
+                onChange={(date) => changeBirth(date)}
               />
             </Grid>
     </div>

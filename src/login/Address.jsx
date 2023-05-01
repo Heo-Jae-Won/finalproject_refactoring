@@ -2,9 +2,12 @@ import { Grid, TextField } from "@material-ui/core";
 import React, { useState } from 'react';
 import { Button } from "react-bootstrap";
 import DaumPostcode from "react-daum-postcode";
+import { useAddressStore } from "../model/address.store";
 
 const Address = () => {
     const [isPopupOpen, setIsPopupOpen] = useState(false);
+    const changeAddress=useAddressStore((state)=>state.changeAddress);
+    const address=useAddressStore((state)=>state.address);
     const handlePostCode = (data) => {
         let fullAddress = data.address;
         let extraAddress = "";
@@ -19,7 +22,7 @@ const Address = () => {
           }
           fullAddress += extraAddress !== "" ? ` (${extraAddress})` : "";
         }
-        setAddress(fullAddress);
+        changeAddress(fullAddress);
       };
     
       const postCodeStyle = {
@@ -55,7 +58,7 @@ const Address = () => {
                 FormHelperTextProps={{ style: { fontSize: 15 } }}
                 name="userAddress"
                 autoComplete="userAddress"
-                onChange={handleFormChange}
+                onChange={changeAddress}
               />
             </Grid>
             <Button

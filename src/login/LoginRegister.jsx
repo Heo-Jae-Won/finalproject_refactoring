@@ -3,7 +3,6 @@ import { Grid, MenuItem, TextField } from "@material-ui/core";
 import React, { useState } from "react";
 import { Alert, Button, Card, Form, Row } from "react-bootstrap";
 
-
 import { useNavigate } from "react-router-dom";
 import { requireInput, requireValidationPass } from "../util/swal/requirement";
 import {
@@ -25,18 +24,23 @@ import {
   informUseableUserId,
 } from "../util/swal/information";
 import { confirmInsert } from "../util/swal/confirmation";
-import { checkEmailValid, checkPasswordValid, checkPhoneNumberValid } from "../util/regex/regex";
+import {
+  checkEmailValid,
+  checkPasswordValid,
+  checkPhoneNumberValid,
+} from "../util/regex/regex";
 import Address from "./Address";
 import Birth from "./Birth";
-
-
-
+import { useAddressStore } from "../model/address.store";
+import { useBirthStore } from "../model/birth.store";
 
 const LoginRegister = () => {
   const navigate = useNavigate();
   const [message, setMessage] = useState("");
   const [image, setImage] = useState("https://dummyimage.com/300x300");
   const [confirmPassword, setConfirmPassword] = useState("");
+  const address = useAddressStore((state) => state.address);
+  const birth = useBirthStore((state) => state.birth);
   const [form, setForm] = useState({
     userId: "",
     userPass: "",
@@ -71,7 +75,9 @@ const LoginRegister = () => {
     }
 
     const result = await checkDuplicationUserNickname(userNickname);
-    result.data === 1 ? informDuplicationUserNicknamePass() : failDuplicationCheckUserNickname();
+    result.data === 1
+      ? informDuplicationUserNicknamePass()
+      : failDuplicationCheckUserNickname();
   };
 
   const confirmEqualPassword = () => {
@@ -127,15 +133,16 @@ const LoginRegister = () => {
     confirmInsert().then(async (result) => {
       //identification process
       if (result.isConfirmed) {
-        const result = await authenticateUser(userTel);
+        // const result = await authenticateUser(userTel);
 
-        const authNumber = prompt("인증번호를 입력하세요.");
+        // const authNumber = prompt("인증번호를 입력하세요.");
 
-        if (authNumber !== String(result.data)) {
-          informFailedAuthentication();
-          return;
-        }
-
+        // if (authNumber !== String(result.data)) {
+        //   informFailedAuthentication();
+        //   return;
+        // }
+        console.log("birth" + birth);
+        console.log("address:" + address);
         const formData = new FormData();
         formData.append("userId", userId);
         formData.append("userPass", userPass);
@@ -147,7 +154,7 @@ const LoginRegister = () => {
         formData.append("file", file);
         formData.append("userStatus", userStatus);
         formData.append("userGender", userGender);
-        formData.append("userBirth", userBirth);
+        formData.append("userBirth", birth);
 
         await saveUser(formData)
           .then(() => {
@@ -177,11 +184,8 @@ const LoginRegister = () => {
 
   //주소 받는 API
 
-
   return (
     <div>
-     
-
       <Row className="d-flex justify-content-center my-5">
         <Card style={{ width: "30rem" }} className="p-3">
           <Form>
@@ -250,7 +254,7 @@ const LoginRegister = () => {
               />
             </Grid>
             <hr />
-          <Birth/>
+            <Birth />
             <hr />
             <Grid item xs={12}>
               <TextField
@@ -262,11 +266,14 @@ const LoginRegister = () => {
                 onChange={handleFormChange}
               />
             </Grid>
-            <Button className="mt-3" onClick={handleDuplicationUserNicknameCheck}>
+            <Button
+              className="mt-3"
+              onClick={handleDuplicationUserNicknameCheck}
+            >
               닉네임 중복확인
             </Button>
             <hr />
-        <Address/>
+            <Address />
             <hr />
             <Grid item xs={12}>
               <TextField

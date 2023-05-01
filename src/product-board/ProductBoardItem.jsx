@@ -1,12 +1,11 @@
-import React, { useCallback, useContext, useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { Button, ButtonGroup, Card, Col, Nav } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
-import { UserContext } from "../context/UserContext";
+import { useUserStore } from "../model/user.store";
 import {
   getProductBoardLikeByUser,
   onClickDislike,
 } from "../util/axios/product.board";
-import { useUserStore } from "../model/user.store";
 
 const ProductBoardItem = ({ postList, fetchProductLikeCnt }) => {
   const navigate = useNavigate();
