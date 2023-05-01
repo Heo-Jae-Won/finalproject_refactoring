@@ -1,16 +1,14 @@
-import qs from "qs";
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import Chart from "react-google-charts";
-import { useLocation } from "react-router-dom";
+import { useUserStore } from "../../model/user.store";
 import { getTradeSellChart } from "../../util/axios/my/trade";
 
 /**
  * 판매 화면 시각화 차트 목록
  */
 const MySellListChart = () => {
-  const search = qs.parse(useLocation().search, { ignoreQueryPrefix: true });
-  const seller = search.seller;
-  const [data, setData] = useState("");
+  const loginUserNickname = useUserStore((state) => state.loginUserNickname);
+  const [data, setData] = useState([]);
   const chartType = useRef("Bar");
   const title = useRef("직업별인원수");
 
@@ -32,11 +30,13 @@ const MySellListChart = () => {
 
   //fetch data from db + put it in state variable
   const fetchTradeSellChartData = useCallback(async () => {
-    let result = await getTradeSellChart(seller);
-    let array = toArrayTradeBuyChartData(result.data);
+    //판매 목록 차트
+    let result = await getTradeSellChart(loginUserNickname);
+    let array = toArrayTradeBuyChartData(result.data.sellListChart);
     setData(array);
-  }, [seller]);
+  }, [loginUserNickname]);
 
+  //HACK: ts 적용 때 공통함수로 빼내기
   const toArrayTradeBuyChartData = (result) => {
     title.current = "2022 월별 판매 총액";
     chartType.current = "LineChart";
@@ -46,6 +46,7 @@ const MySellListChart = () => {
     result.forEach((item) => {
       array.push([item.month, item.payPrice]);
     });
+    console.log(array);
     return array;
   };
 

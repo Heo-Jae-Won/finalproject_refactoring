@@ -51,6 +51,7 @@ export const deleteProductBoard = (productCode) => {
 }
 
 export const getProductBoardLikeByUser = (productCode, userNickname) => {
+    console.log(productCode);
     return instance({
         url: `/productBoard/like/${productCode}/${userNickname}`,
         method: 'get',

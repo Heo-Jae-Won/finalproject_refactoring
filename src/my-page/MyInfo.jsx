@@ -91,7 +91,7 @@ const MyInfo = () => {
           userId: userId,
           userNickname: userNickname,
           userProfile: userProfile,
-          userAddress: address || userAddress,
+          userAddress: address,
           userEmail: userEmail,
           userTel: userTel,
           file: file,
@@ -176,7 +176,7 @@ const MyInfo = () => {
               />
             </Form.Group>
 
-            <Address />
+            <Address userAddress={userAddress} />
 
             <Form.Control
               className="my-3"

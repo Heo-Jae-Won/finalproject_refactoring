@@ -5,6 +5,7 @@ import { useUserStore } from "../model/user.store";
 import {
   getProductBoardLikeByUser,
   onClickDislike,
+  onClickLike,
 } from "../util/axios/product.board";
 
 /**
@@ -21,13 +22,11 @@ const ProductBoardItem = ({ postList, fetchProductLikeCnt }) => {
     productViewcnt,
     productLikeCnt,
   } = postList;
-  
   const [isClickedLike, setIsClickedLike] = useState(false);
   const loginUserNickname = useUserStore((state) => state.loginUserNickname);
- 
-  const fetchLikeList = useCallback(async () => {
 
-     //상품에 대한 좋아요 클릭 여부 확인
+  const fetchLikeList = useCallback(async () => {
+    //상품에 대한 좋아요 클릭 여부 확인
     const result = await getProductBoardLikeByUser(
       productCode,
       loginUserNickname
@@ -48,9 +47,7 @@ const ProductBoardItem = ({ postList, fetchProductLikeCnt }) => {
       userNickname: loginUserNickname,
     };
 
-    isClickedLike === false
-      ? await onClickDislike(data)
-      : await onClickDislike(data);
+    !isClickedLike ? await onClickLike(data) : await onClickDislike(data);
 
     setIsClickedLike(!isClickedLike);
     fetchProductLikeCnt();
@@ -85,7 +82,7 @@ const ProductBoardItem = ({ postList, fetchProductLikeCnt }) => {
           <ButtonGroup>
             <Button
               className="btn-10"
-              onClick={sessionStorage.getItem("uid") && handleLikeClick}
+              onClick={loginUserNickname && handleLikeClick}
               variant="primary"
             >
               <img

@@ -1,10 +1,10 @@
 import React from "react";
 import { Button } from "react-bootstrap";
 import { useUserStore } from "../../model/user.store";
+
 /**
  * MyChatList.jsx의 실제 화면
  */
-
 const MyChatItem = ({ message, handleMessageDelete }) => {
   const { text, date, userId, id, userNickname, userProfile } = message;
   const loginUserId = useUserStore((state) => state.loginUserId);

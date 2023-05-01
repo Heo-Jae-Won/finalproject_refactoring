@@ -8,7 +8,7 @@ import HomePage from './basis/HomePage';
 import EventPage from './event/EventPage';
 
 import LoginPage from './login/LoginPage';
-import MyPage from './my/MyPage';
+import MyPage from './my-page/MyPage';
 import NoticePage from './notice/NoticePage';
 import ProductBoardPage from './product-board/ProductBoardPage';
 

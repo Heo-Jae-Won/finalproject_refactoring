@@ -14,11 +14,7 @@ const MyMenu = () => {
     const loginUserId = useUserStore(
         (state) => state.loginUserId
       );
-      const loginUserNickname = useUserStore(
-        (state) => state.loginUserNickname
-      );
     return (
-
         <div>
             <Offcanvas show={show} onHide={handleClose}>
                 <Offcanvas.Header closeButton>
@@ -30,7 +26,7 @@ const MyMenu = () => {
                             내 정보
                         </Button>
 
-                        <Button variant='secondary' className='my-5' onClick={() =>navigate(`/my/review?receiver=${loginUserNickname}`)}>
+                        <Button variant='secondary' className='my-5' onClick={() =>navigate(`/my/review`)}>
                             내가 받은 리뷰
                         </Button>
 
@@ -38,11 +34,11 @@ const MyMenu = () => {
                             내 채팅
                         </Button>
 
-                        <Button variant='secondary' className='my-5' onClick={() => navigate(`/my/sell?seller=${loginUserNickname}`)}>
+                        <Button variant='secondary' className='my-5' onClick={() => navigate(`/my/sell`)}>
                             내 판매 내역
                         </Button>
 
-                        <Button variant='secondary' className='my-5' onClick={() => navigate(`/my/buy?buyer=${loginUserNickname}`)}>
+                        <Button variant='secondary' className='my-5' onClick={() => navigate(`/my/buy`)}>
                             내 구매 내역
                         </Button>
 

@@ -1,14 +1,6 @@
 import { Card, Grid, TextField } from "@material-ui/core";
 import { Rating } from "@mui/material";
-import {
-  addDoc,
-  collection,
-  getFirestore,
-  limit,
-  onSnapshot,
-  query,
-  where,
-} from "firebase/firestore";
+import { collection, getFirestore, onSnapshot } from "firebase/firestore";
 import React, { useCallback, useEffect, useState } from "react";
 import { Button, ButtonGroup, Form, Row, Spinner } from "react-bootstrap";
 import { useNavigate, useParams } from "react-router-dom";
@@ -19,6 +11,11 @@ import {
   getProductBoardRead,
   updateProductBoard,
 } from "../util/axios/product.board";
+import {
+  addFirebaseChatRoom,
+  getFirebaseQuery,
+  getOnSnapShotProductCode,
+} from "../util/firebase/util";
 import { confirmDelete } from "../util/swal/confirmation";
 import { informServerError, informSuccess } from "../util/swal/information";
 import {
@@ -67,31 +64,25 @@ const ProductBoardRead = () => {
     setLoading(true);
 
     //실제 존재하는 상품 여부 확인
-      const result = await getProductBoardRead(productCode);
+    const result = await getProductBoardRead(productCode);
 
-      const q = query(
-        collection(db, `chatroom`),
-        where("who", "array-contains", loginUserId),
-        limit(100)
-      );
+    const q = getFirebaseQuery(db, loginUserId);
 
-      onSnapshot(q, (snapshot) => {
-        let rows = [];
-        snapshot.forEach((doc) => {
-          rows.push(doc.data().productCode);
-        });
-        setComparisonProductCode(rows);
-      });
+    let rows = [];
+    
+    //productCode를 query에 추가
+    getOnSnapShotProductCode(q, rows);
+    setComparisonProductCode(rows);
 
-      //팔리거나 삭제되면 접근 불가 조치
-      if (result.data.productStatus === 0) {
-        setPostRead(result.data);
-        setImage(result.data.productImage);
-      } else {
-        DeleteAlready();
-        let seconds_ms = 1000;
-        setTimeout(() => navigate("/productBoard/list"), seconds_ms);
-      }
+    //팔리거나 삭제되면 접근 불가 조치
+    if (result.data.productStatus === 0) {
+      setPostRead(result.data);
+      setImage(result.data.productImage);
+    } else {
+      DeleteAlready();
+      let seconds_ms = 1000;
+      setTimeout(() => navigate("/productBoard/list"), seconds_ms);
+    }
     setLoading(false);
   }, [db, loginUserId, navigate, productCode]);
 
@@ -114,7 +105,6 @@ const ProductBoardRead = () => {
     e.preventDefault();
 
     informSuccess().then(async (result) => {
-      //update click
       if (result.isConfirmed) {
         const formData = new FormData();
         formData.append("file", file);
@@ -140,7 +130,6 @@ const ProductBoardRead = () => {
     e.preventDefault();
     confirmDelete().then(async (result) => {
       if (result.isConfirmed) {
-
         //상품 정보 삭제
         await deleteProductBoard(productCode)
           .then(() => {
@@ -158,16 +147,14 @@ const ProductBoardRead = () => {
     if (!comparisonProductCode.includes(productCode)) {
       const docRef = collection(db, "chatroom");
 
-      //파이어베이스 db 상품 채팅방 추가
-      await addDoc(docRef, {
-        who: [loginUserId, userId],
-        date: new Intl.DateTimeFormat("kr", {
-          dateStyle: "full",
-          timeStyle: "full",
-        }).format(new Date()),
-        productCode: productCode,
-        productImage: productImage,
-      });
+      //상품 채팅방 추가
+      addFirebaseChatRoom(
+        docRef,
+        loginUserId,
+        userId,
+        productCode,
+        productImage
+      );
     }
     navigate(`/my/chat`);
   };

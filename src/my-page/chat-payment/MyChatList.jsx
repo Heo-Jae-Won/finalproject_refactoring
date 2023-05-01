@@ -1,15 +1,4 @@
-import {
-  addDoc,
-  collection,
-  deleteDoc,
-  doc,
-  getFirestore,
-  limit,
-  onSnapshot,
-  orderBy,
-  query,
-  where,
-} from "firebase/firestore";
+import { collection, deleteDoc, doc, getFirestore } from "firebase/firestore";
 import qs from "qs";
 import { default as React, useCallback, useEffect, useState } from "react";
 import { Button, Form, Row } from "react-bootstrap";
@@ -17,6 +6,13 @@ import { useLocation, useNavigate } from "react-router-dom";
 import { app } from "../../fireStore";
 import { useUserStore } from "../../model/user.store";
 import { extractProductBoardRead } from "../../util/axios/product.board";
+import {
+  addFireBaseChatMessage,
+  getFirebaseQuery,
+  getFirebaseSubQuery,
+  getOnSnapShotChatMessage,
+  getOnSnapShotChatRoom,
+} from "../../util/firebase/util";
 import { confirmDelete, confirmLeave } from "../../util/swal/confirmation";
 import MyChatItem from "./MyChatItem";
 import "./MyChatList.css";
@@ -36,73 +32,21 @@ const MyChatList = () => {
   const [messageList, setMessageList] = useState([]);
   const [chatId, setChatId] = useState("init");
   const [productBoardInfo, setProductBoardInfo] = useState({});
-  const loginUserId=useUserStore((state)=>state.loginUserId);
+  const loginUserId = useUserStore((state) => state.loginUserId);
   const loginUserNickname = useUserStore((state) => state.loginUserNickname);
   const loginUserProfile = useUserStore((state) => state.loginUserProfile);
 
   const fetchRoomList = useCallback(async () => {
-    const q = query(
-      collection(db, `chatroom`),
-      where("who", "array-contains",loginUserId),
-      limit(100)
-    );
+    const q = getFirebaseQuery(db, loginUserId);
 
     //채팅방의 동적 DOM 형성
-    onSnapshot(q, (snapshot) => {
-      snapshot.forEach(async (doc) => {
-        const li = document.createElement("li");
+    getOnSnapShotChatRoom(q, loginUserId, chatId);
 
-        li.className = "list-group-item non-click";
-
-        li.innerHTML = `
-                <h6>
-                ${
-                  loginUserId === doc.data().who[0]
-                    ? "판매자ㅡ"
-                    : "구매자ㅡ"
-                }
-                        ${
-                          loginUserId === doc.data().who[0]
-                            ? doc.data().who[1]
-                            : doc.data().who[0]
-                        }</h6>
-                        <div class='text-small'>${doc.id}</div>
-                        <p class='text-small1'>${doc.data().productCode}</p>
-                        <img src=${JSON.stringify(
-                          doc.data().productImage
-                        )} width=70 height=70/>
-                `;
-
-        //채팅방 중복 생성 방지
-        if (chatId.includes("init")) {
-          document.getElementsByClassName("list-group chat-list")[0].append(li);
-        }
-      });
-
-      //채팅방 클릭 시 UI 변화하게 설정
-      for (
-        let i = 0;
-        i < document.getElementsByClassName("list-group-item non-click").length;
-        ++i
-      ) {
-        document
-          .getElementsByClassName("list-group-item non-click")
-          [i].addEventListener("click", function () {
-            setChatId(
-              document.getElementsByClassName("text-small")[i].innerHTML
-            );
-            setProductCode(
-              document.getElementsByClassName("text-small1")[i].innerHTML
-            );
-          });
-      }
-
-      //상품 정보 즉시호출 함수
-      (async () => {
-        const result = await extractProductBoardRead(productCode);
-        setProductBoardInfo(result.data);
-      })();
-    });
+    //상품 정보 즉시호출 함수
+    (async () => {
+      const result = await extractProductBoardRead(productCode);
+      setProductBoardInfo(result.data);
+    })();
   }, [chatId, db, loginUserId, productCode]);
 
   const nonClick = document.querySelectorAll(".non-click");
@@ -114,7 +58,6 @@ const MyChatList = () => {
       e.target.tagName === "H6" ||
       e.target.tagName === "IMG"
     ) {
-
       // dom 요소에서 모든 "click" 클래스 제거
       nonClick.forEach((e) => {
         e.classList.remove("click");
@@ -147,13 +90,14 @@ const MyChatList = () => {
 
       const docRef = doc(db, "chatRoom", `${chatId}`);
       const colRef = collection(docRef, "messageList");
-      await addDoc(colRef, {
-        text: message,
-        date: new Date().getTime(),
-        userId: loginUserId,
-        userNickname: loginUserNickname,
-        userProfile: loginUserProfile,
-      });
+      //
+      addFireBaseChatMessage(
+        colRef,
+        message,
+        loginUserId,
+        loginUserNickname,
+        loginUserProfile
+      );
       setMessage("");
       window.scrollTo({
         top: 200,
@@ -164,31 +108,18 @@ const MyChatList = () => {
   };
 
   const fetchMessageList = useCallback(() => {
-    const q = query(
-      collection(db, `chatRoom/${chatId}/messageList`),
-      orderBy("date", "asc"),
-      limit(100)
-    );
+    const q = getFirebaseSubQuery(db, chatId);
+    let rows = [];
 
-    onSnapshot(q, (snapshot) => {
-      let rows = [];
-      snapshot.forEach((doc) => {
-        rows.push({
-          id: doc.id,
-          userId: doc.data().uid,
-          text: doc.data().text,
-          date: doc.data().date,
-          userNickname: doc.data().userNickname,
-          userProfile: doc.data().userProfile,
-        });
-      });
-      setMessageList(rows);
-    });
+    //chatting message를 firebase db에 추가
+    getOnSnapShotChatMessage(q, rows);
+    setMessageList(rows);
   }, [chatId, db]);
 
   const handleMessageDelete = async (id) => {
     confirmDelete().then(async (result) => {
       if (result.isConfirmed) {
+        //삭제
         await deleteDoc(doc(db, `chatRoom/${chatId}/messageList`, id));
       }
     });
@@ -197,7 +128,6 @@ const MyChatList = () => {
   const handleChatRoomDelete = (id) => {
     confirmLeave().then(async (result) => {
       if (result.isConfirmed) {
-
         //HACK : setTimeout설정 안하면 채팅방이 중복돼서 다시 만들어지는 것이 눈에 보이게 됨.
         setTimeout(() => deleteDoc(doc(db, `chatRoom`, id)), 1000);
         document
@@ -252,8 +182,7 @@ const MyChatList = () => {
                   />
                 </Form>
                 <div>
-                  {sessionStorage.getItem("userId") !==
-                    productBoardInfo.userId &&
+                  {loginUserId !== productBoardInfo.userId &&
                     productBoardInfo.productStatus === 0 && (
                       <Button
                         Button
