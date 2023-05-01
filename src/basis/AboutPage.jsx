@@ -3,7 +3,9 @@ import { Col, Row } from 'react-bootstrap';
 import Card from 'react-bootstrap/Card';
 import Carousel from 'react-bootstrap/Carousel';
 
-
+/**
+ * 소개 화면
+ */
 
 const AboutPage = () => {
   return (

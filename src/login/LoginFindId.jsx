@@ -5,6 +5,10 @@ import { requireInput } from "../util/swal/requirement";
 import { findUserId } from "../util/axios/login";
 import { informServerError } from "../util/swal/information";
 
+/**
+ * 아이디를 찾는 화면
+ */
+
 const LoginFindId = () => {
   const [message, setMessage] = useState("");
   const [form, setForm] = useState({
@@ -28,20 +32,19 @@ const LoginFindId = () => {
       return;
     }
 
-    try {
-      const result = await findUserId(userEmail, userName);
-
-      if (!result.data) {
-        setForm({
-          userName: "",
-          userEmail: "",
-        });
-        setMessage("검색된 아이디가 없습니다");
-      } else {
-        setMessage("아이디는 " + result.data + "입니다");
-      }
-    } catch (e) {
+    //아이디 찾기
+    const result = await findUserId(userEmail, userName).catch(()=>{
       informServerError();
+    });
+
+    if (!result.data) {
+      setForm({
+        userName: "",
+        userEmail: "",
+      });
+      setMessage("검색된 아이디가 없습니다");
+    } else {
+      setMessage("아이디는 " + result.data + "입니다");
     }
   };
 

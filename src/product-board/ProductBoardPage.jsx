@@ -4,6 +4,9 @@ import ProductBoardRead from './ProductBoardRead'
 import ProductBoardList from './ProductBoardList'
 import ProductBoardInsert from './ProductBoardInsert'
 
+/**
+ * 상품 게시판에 관한 routing
+ */
 const ProductBoardPage = () => {
   return (
     <div>

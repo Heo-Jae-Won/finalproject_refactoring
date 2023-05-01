@@ -3,6 +3,10 @@ import { Button, Spinner } from "react-bootstrap";
 import { useNavigate, useParams } from "react-router-dom";
 import { getNoticeRead } from "../util/axios/notice";
 
+/**
+ * 공지사항 조회
+ */
+
 const NoticeRead = () => {
   const { noticeCode } = useParams();
   const navigate = useNavigate();
@@ -17,6 +21,8 @@ const NoticeRead = () => {
 
   const fetchNoticeRead = useCallback(async () => {
     setLoading(true);
+
+    //공지사항 조회
     const result = await getNoticeRead(noticeCode);
     setNoticeRead(result.data);
     setLoading(false);

@@ -3,6 +3,10 @@ import { Container, Nav, NavDropdown, Navbar } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
 import { useUserStore } from "../model/user.store";
 
+/**
+ * header 화면
+ * 상품 등록은 loginUser만 접근 가능. dropdown 메뉴 구성
+ */
 const HeaderPage = () => {
   const navigate = useNavigate();
   const loginUserNickname = useUserStore((state) => state.loginUserNickname);

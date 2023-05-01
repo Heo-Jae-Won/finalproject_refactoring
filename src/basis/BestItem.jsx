@@ -2,6 +2,9 @@ import React from 'react';
 import { Button, Nav } from 'react-bootstrap';
 import { useNavigate } from 'react-router-dom';
 
+/**
+ * BestList의 실제 화면
+ */
 
 const BestItem = ({ bestList }) => {
   const navigate = useNavigate();

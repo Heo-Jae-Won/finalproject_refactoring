@@ -2,6 +2,9 @@ import React from 'react';
 import { Nav } from 'react-bootstrap';
 import { useNavigate } from 'react-router-dom';
 
+/**
+ * footer 화면
+ */
 const FooterPage = () => {
 const navigate=useNavigate();
 

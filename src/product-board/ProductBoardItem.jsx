@@ -7,6 +7,9 @@ import {
   onClickDislike,
 } from "../util/axios/product.board";
 
+/**
+ * ProductBoardList의 실제 화면
+ */
 const ProductBoardItem = ({ postList, fetchProductLikeCnt }) => {
   const navigate = useNavigate();
   const {
@@ -21,14 +24,15 @@ const ProductBoardItem = ({ postList, fetchProductLikeCnt }) => {
   
   const [isClickedLike, setIsClickedLike] = useState(false);
   const loginUserNickname = useUserStore((state) => state.loginUserNickname);
-  //productLikeCnt on productBoardItem + truth of user whether click like or not
+ 
   const fetchLikeList = useCallback(async () => {
+
+     //상품에 대한 좋아요 클릭 여부 확인
     const result = await getProductBoardLikeByUser(
       productCode,
       loginUserNickname
     );
 
-    //initial state of productLikeCnt = false
     setIsClickedLike(result.data.likeStatus || false);
   }, [loginUserNickname, productCode]);
 
@@ -38,7 +42,6 @@ const ProductBoardItem = ({ postList, fetchProductLikeCnt }) => {
     navigate(href);
   };
 
-  //click like button
   const handleLikeClick = async () => {
     const data = {
       productCode,

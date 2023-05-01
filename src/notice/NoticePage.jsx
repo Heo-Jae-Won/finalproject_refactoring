@@ -3,7 +3,9 @@ import { Route, Routes } from 'react-router-dom'
 import NoticeList from './NoticeList'
 import NoticeRead from './NoticeRead'
 
-
+/**
+ * 공지사항 관련 routing
+ */
 const NoticePage = () => {
   return (
     <div>

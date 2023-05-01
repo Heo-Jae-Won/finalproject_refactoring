@@ -4,6 +4,10 @@ import { Button } from "react-bootstrap";
 import DaumPostcode from "react-daum-postcode";
 import { useAddressStore } from "../model/address.store";
 
+/**
+ * 주소를 지정하는 화면
+ * LoginRegister.jsx를 구성하는 하위 component
+ */
 const Address = () => {
     const [isPopupOpen, setIsPopupOpen] = useState(false);
     const changeAddress=useAddressStore((state)=>state.changeAddress);

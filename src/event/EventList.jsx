@@ -7,6 +7,10 @@ import { useLocation, useNavigate } from "react-router-dom";
 import { getEventList } from "../util/axios/event";
 import EventItem from "./EventItem";
 
+/**
+ * Event 목록 기능
+ */
+
 const EventList = () => {
   const location = useLocation();
   const navigate = useNavigate();
@@ -19,7 +23,7 @@ const EventList = () => {
   const page = parseInt(search.page) || 1;
   const num = 5;
 
-  //loading on ㅡ> render ㅡ> loading off
+  //이벤트 목록
   const fetchEventList = useCallback(async () => {
     setLoading(true);
     const result = await getEventList(page, num, searchType, query);
@@ -28,7 +32,7 @@ const EventList = () => {
     setLoading(false);
   }, [page, query, searchType]);
 
-  //enter ㅡ> fetching
+  //요구조건에 따라 다시 이벤트 목록 검색
   const fetchFilteredEventList = (e) => {
     if (e.keyCode === 13) {
       fetchEventList();

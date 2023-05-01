@@ -5,7 +5,9 @@ import "slick-carousel/slick/slick.css";
 import "../Carousel.css";
 import BestList from './BestList';
 import 'animate.css'; 
-
+/**
+ * 약간의 animation이 담긴 homepage 화면
+ */
 const HomePage = () => {
 
   var animation = function () {

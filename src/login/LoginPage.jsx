@@ -5,8 +5,10 @@ import LoginForm from "./LoginForm"
 import LoginRegister from "./LoginRegister"
 import LoginRestore from "./LoginRestore"
 
+/**
+ * 로그인에 관한 routing
+ */
 const LoginPage = () => {
-
 
   return (
     <div>

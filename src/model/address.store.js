@@ -1,5 +1,4 @@
 import { create } from "zustand";
-import { getUserInfo } from "../util/axios/basis";
 import { createJSONStorage, persist } from "zustand/middleware";
 export const useAddressStore = create(
   persist(

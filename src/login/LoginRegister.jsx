@@ -4,36 +4,37 @@ import React, { useState } from "react";
 import { Alert, Button, Card, Form, Row } from "react-bootstrap";
 
 import { useNavigate } from "react-router-dom";
-import { requireInput, requireValidationPass } from "../util/swal/requirement";
+import { useAddressStore } from "../model/address.store";
+import { useBirthStore } from "../model/birth.store";
 import {
-  authenticateUser,
   checkDuplicationUserId,
   checkDuplicationUserNickname,
   saveUser,
 } from "../util/axios/login";
 import {
-  failDuplicationCheckUserId,
-  failDuplicationCheckUserNickname,
-  failFileUploadByType,
-} from "../util/swal/service.exception";
-import {
-  informDuplicationUserNicknamePass,
-  informFailedAuthentication,
-  informNotEqualPassword,
-  informSuccess,
-  informUseableUserId,
-} from "../util/swal/information";
-import { confirmInsert } from "../util/swal/confirmation";
-import {
   checkEmailValid,
   checkPasswordValid,
   checkPhoneNumberValid,
 } from "../util/regex/regex";
+import { confirmInsert } from "../util/swal/confirmation";
+import {
+  informDuplicationUserNicknamePass,
+  informNotEqualPassword,
+  informSuccess,
+  informUseableUserId,
+} from "../util/swal/information";
+import { requireInput, requireValidationPass } from "../util/swal/requirement";
+import {
+  failDuplicationCheckUserId,
+  failDuplicationCheckUserNickname,
+  failFileUploadByType,
+} from "../util/swal/service.exception";
 import Address from "./Address";
 import Birth from "./Birth";
-import { useAddressStore } from "../model/address.store";
-import { useBirthStore } from "../model/birth.store";
 
+/**
+ * 회원가입 화면
+ */
 const LoginRegister = () => {
   const navigate = useNavigate();
   const [message, setMessage] = useState("");
@@ -74,6 +75,7 @@ const LoginRegister = () => {
       return;
     }
 
+    //닉네임 중복 확인
     const result = await checkDuplicationUserNickname(userNickname);
     result.data === 1
       ? informDuplicationUserNicknamePass()
@@ -94,6 +96,7 @@ const LoginRegister = () => {
       return;
     }
 
+    //아이디 중복 확인
     const result = await checkDuplicationUserId(userId);
     !result.data ? informUseableUserId() : failDuplicationCheckUserId();
   };
@@ -131,8 +134,8 @@ const LoginRegister = () => {
     }
 
     confirmInsert().then(async (result) => {
-      //identification process
       if (result.isConfirmed) {
+        //   //인증번호 확인
         // const result = await authenticateUser(userTel);
 
         // const authNumber = prompt("인증번호를 입력하세요.");
@@ -141,8 +144,6 @@ const LoginRegister = () => {
         //   informFailedAuthentication();
         //   return;
         // }
-        console.log("birth" + birth);
-        console.log("address:" + address);
         const formData = new FormData();
         formData.append("userId", userId);
         formData.append("userPass", userPass);
@@ -156,6 +157,7 @@ const LoginRegister = () => {
         formData.append("userGender", userGender);
         formData.append("userBirth", birth);
 
+        //회원가입
         await saveUser(formData)
           .then(() => {
             informSuccess();

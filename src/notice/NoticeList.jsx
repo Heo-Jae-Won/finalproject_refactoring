@@ -1,5 +1,4 @@
 import { MenuItem, TextField } from '@material-ui/core';
-import axios from 'axios';
 import qs from 'qs';
 import React, { useCallback, useEffect, useState } from 'react';
 import { Spinner, Table } from 'react-bootstrap';
@@ -8,6 +7,9 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import { getNoticeList } from '../util/axios/notice';
 import NoticeItem from './NoticeItem';
 
+/**
+ * 공지사항 목록
+ */
 const NoticeList = () => {
     const location = useLocation();
     const navigate = useNavigate();
@@ -20,9 +22,10 @@ const NoticeList = () => {
     const page = parseInt(search.page) || 1;
     const num = 5;
 
-    //loading on ㅡ> rendering ㅡ> loading off
     const fetchNoticeList = useCallback( async () => {
         setLoading(true);
+
+        //공지사항 목록
         const result = await getNoticeList(page, num, searchType, query);
         setNoticeList(result.data.noticeList);
         setNoticeListTotal(result.data.noticeListTotal);

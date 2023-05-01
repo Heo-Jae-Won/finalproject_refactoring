@@ -21,6 +21,10 @@ const months = [
   "December",
 ];
 
+/**
+ * 생년월일을 지정하는 화면
+ * LoginRegister.jsx를 구성하는 하위 component.
+ */
 const Birth = () => {
   const changeBirth=useBirthStore((state)=>state.changeBirth);
   const birth=useBirthStore((state)=>state.birth);

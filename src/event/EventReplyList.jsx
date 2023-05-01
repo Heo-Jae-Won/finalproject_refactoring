@@ -13,8 +13,9 @@ const EventReplyList = ({ eventCode }) => {
   const [page, setPage] = useState(1);
   const [eventReplyTotal, setEventReplyTotal] = useState(0);
   const [eventReplyContent, setEventReplyContent] = useState("");
-  const num = 6;
   const loginUserNickname = useUserStore((state) => state.loginUserNickname);
+  const num = 6;
+
   const fetchEventReplyList = useCallback(async () => {
     const result = await getReplyList(eventCode, page, num);
     setEventReplyList(result.data.eventReplyList);
@@ -47,7 +48,8 @@ const EventReplyList = ({ eventCode }) => {
         eventReplyWriter: loginUserNickname,
         eventReplyContent,
       };
-
+      
+      //댓글 등록
       await insertReply(data)
         .then(() => {
           setPage(page);
@@ -63,6 +65,8 @@ const EventReplyList = ({ eventCode }) => {
   const handleReplyDelete = async (eventReplyCode) => {
     confirmDelete().then(async (result) => {
       if (result.isConfirmed) {
+
+        //댓글 삭제
         await deleteReply(eventReplyCode)
           .then(() => {
             informSuccess();

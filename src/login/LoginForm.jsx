@@ -10,6 +10,9 @@ import {
   informServerError,
 } from "../util/swal/information";
 
+/**
+ * 로그인 화면
+ */
 const LoginForm = () => {
   const navigate = useNavigate();
   const fetchLoginUser = useUserStore((state) => state.fetchLoginUser);
@@ -30,11 +33,12 @@ const LoginForm = () => {
   const handleLogin = async (e) => {
     e.preventDefault();
 
-    const result = await login(form).catch(()=>{
+    //로그인
+    const result = await login(form).catch(() => {
       informServerError();
     });
 
-    //id x
+    //db에 정보가 없거나 비밀번호가 틀림
     if (result.data === 0 || result.data === 3) {
       informDuplicationPassedUserId();
       setForm({
@@ -42,7 +46,7 @@ const LoginForm = () => {
         userPass: "",
       });
 
-      //move to restore
+      //회원 탈퇴 상태
     } else if (result.data === 1) {
       confirmRestore().then(async (result) => {
         if (result.isConfirmed) {
@@ -50,9 +54,9 @@ const LoginForm = () => {
         }
       });
 
-      //login success
+      //로그인 성공
     } else if (result.data === 2) {
-      fetchLoginUser(userId); //작동잘 하고 있음.
+      fetchLoginUser(userId);
       navigate("/");
     }
   };

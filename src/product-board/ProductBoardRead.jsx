@@ -26,6 +26,9 @@ import {
   failFileUploadBySize,
 } from "../util/swal/service.exception";
 
+/**
+ * 상품 조회
+ */
 const ProductBoardRead = () => {
   const { productCode } = useParams();
   const navigate = useNavigate();
@@ -63,9 +66,7 @@ const ProductBoardRead = () => {
   const fetchProductBoard = useCallback(async () => {
     setLoading(true);
 
-    //productCode o ㅡ>rendering on || productCode x ㅡ>move to ProductBoardList
-    try {
-      console.log(productCode);
+    //실제 존재하는 상품 여부 확인
       const result = await getProductBoardRead(productCode);
 
       const q = query(
@@ -82,7 +83,7 @@ const ProductBoardRead = () => {
         setComparisonProductCode(rows);
       });
 
-      //sold, removed ㅡ> not allow access
+      //팔리거나 삭제되면 접근 불가 조치
       if (result.data.productStatus === 0) {
         setPostRead(result.data);
         setImage(result.data.productImage);
@@ -91,9 +92,6 @@ const ProductBoardRead = () => {
         let seconds_ms = 1000;
         setTimeout(() => navigate("/productBoard/list"), seconds_ms);
       }
-    } catch (e) {
-      informServerError();
-    }
     setLoading(false);
   }, [db, loginUserId, navigate, productCode]);
 
@@ -128,8 +126,8 @@ const ProductBoardRead = () => {
         formData.append("productImage", productImage);
         formData.append("productName", productName);
 
+        //상품 정보 수정
         await updateProductBoard(formData).catch((e) => {
-          //변경이 필요함.Exception 메시지 받아오게끔.
           e.message === "Network Error"
             ? failFileUploadBySize()
             : informServerError();
@@ -141,8 +139,9 @@ const ProductBoardRead = () => {
   const handleProductBoardDelete = (e) => {
     e.preventDefault();
     confirmDelete().then(async (result) => {
-      //remove click
       if (result.isConfirmed) {
+
+        //상품 정보 삭제
         await deleteProductBoard(productCode)
           .then(() => {
             informSuccess();
@@ -158,8 +157,10 @@ const ProductBoardRead = () => {
   const setChatRoomList = async () => {
     if (!comparisonProductCode.includes(productCode)) {
       const docRef = collection(db, "chatroom");
+
+      //파이어베이스 db 상품 채팅방 추가
       await addDoc(docRef, {
-        who: [sessionStorage.getItem("userId"), userId],
+        who: [loginUserId, userId],
         date: new Intl.DateTimeFormat("kr", {
           dateStyle: "full",
           timeStyle: "full",

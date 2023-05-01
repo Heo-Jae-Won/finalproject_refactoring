@@ -9,6 +9,9 @@ import { informSuccess } from "../util/swal/information";
 import { requireInput } from "../util/swal/requirement";
 import { failFileUploadByType } from "../util/swal/service.exception";
 
+/**
+ * 상품 게시판 등록
+ */
 const ProductBoardInsert = () => {
   const navigate = useNavigate();
   const [image, setImage] = useState("");
@@ -52,7 +55,7 @@ const ProductBoardInsert = () => {
       requireInput();
       return;
     }
-    
+
     const formData = new FormData();
     formData.append("file", file);
     formData.append("productContent", productContent);
@@ -64,6 +67,8 @@ const ProductBoardInsert = () => {
 
     confirmInsert().then(async (result) => {
       if (result.isConfirmed) {
+
+        //상품게시판 등록
         await insertProductBoard(formData)
           .then(() => {
             informSuccess();

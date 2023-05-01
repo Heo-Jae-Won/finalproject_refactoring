@@ -1,6 +1,9 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
 
+/**
+ * EventList의 실제 화면
+ */
 const EventItem = ({ eventList }) => {
   const navigate = useNavigate();
   const { eventCode, eventTitle, eventContent, eventWriter, eventRegDate } = eventList;

@@ -7,6 +7,10 @@ import { getEventRead } from "../util/axios/event";
 import { useCallback } from "react";
 import EventReplyList from "./EventReplyList";
 
+/**
+ * Event 조회 화면
+ */
+
 const EventRead = () => {
   const navigate = useNavigate();
   const { eventCode } = useParams();
@@ -19,6 +23,7 @@ const EventRead = () => {
     eventRegDate: "",
   });
   
+  //이벤트 조회
   const fetchEventRead = useCallback( async () => {
     setLoading(true);
     const result = await getEventRead(eventCode);

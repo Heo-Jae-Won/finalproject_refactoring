@@ -8,6 +8,9 @@ import '../Pagination.css';
 import { getProductBoardList } from '../util/axios/product.board';
 import ProductBoardItem from './ProductBoardItem'
 
+/**
+ * 상품 게시판 목록
+ */
 const ProductBoardList = () => {
     const location = useLocation();
     const navigate = useNavigate();
@@ -20,9 +23,10 @@ const ProductBoardList = () => {
     const page = parseInt(search.page) || 1;
     const num = 6;
 
-    //loading on ㅡ> render ㅡ> loading off
     const fetchProductBoardList = useCallback(async () => {
         setLoading(true);
+
+        //상품 게시판 목록
         const result = await getProductBoardList(page, num, searchType, query);
         setPostList(result.data.productList);
         setProductListTotal(result.data.productListTotal);
@@ -30,7 +34,6 @@ const ProductBoardList = () => {
     }, [page, query, searchType])
 
 
-    //enter ㅡ> new render
     const fetchFilteredProductBoardList = (e) => {
         if (e.keyCode === 13) {
             fetchProductBoardList();
@@ -39,8 +42,10 @@ const ProductBoardList = () => {
 
 
 
-    //update productLikeCnt on productBoardItem
+    //ProductBoardItem에 props로 내려줄 함수
     const fetchProductLikeCnt = async () => {
+        
+        //상품별 좋아요 갯수 확인
         const result = await getProductBoardList(page, num, searchType, query);
         setPostList(result.data.productList);
         setProductListTotal(result.data.productListTotal);
@@ -52,7 +57,6 @@ const ProductBoardList = () => {
     }, [fetchProductBoardList, page])
 
 
-    // progress bar when loading
     if (loading) return (
         <Spinner animation="border" variant="primary"
             style={{ width: '20rem', height: '20rem', marginTop: '220px' }} />
