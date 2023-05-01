@@ -1,29 +1,25 @@
-import React, { useContext, useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { Button } from "react-bootstrap";
 import Form from "react-bootstrap/Form";
 import Pagination from "react-js-pagination";
-import { UserContext } from "../context/UserContext";
 import "../Pagination.css";
+import { useUserStore } from "../model/user.store";
 import { deleteReply, getReplyList, insertReply } from "../util/axios/event";
-import { useCallback } from "react";
-import { informServerError, informSuccess } from "../util/swal/information";
 import { confirmDelete } from "../util/swal/confirmation";
+import { informServerError, informSuccess } from "../util/swal/information";
 
 const EventReplyList = ({ eventCode }) => {
-  const { loginUser } = useContext(UserContext);
   const [eventReplyList, setEventReplyList] = useState([]);
   const [page, setPage] = useState(1);
   const [eventReplyTotal, setEventReplyTotal] = useState(0);
   const [eventReplyContent, setEventReplyContent] = useState("");
   const num = 6;
-
-  const fetchEventReplyList = useCallback( async () => {
-    console.log(eventCode);
+  const loginUserNickname = useUserStore((state) => state.loginUserNickname);
+  const fetchEventReplyList = useCallback(async () => {
     const result = await getReplyList(eventCode, page, num);
     setEventReplyList(result.data.eventReplyList);
     setEventReplyTotal(result.data.eventReplyTotal);
-    console.log(result.data.eventReplyList);
-  },[eventCode, page]);
+  }, [eventCode, page]);
 
   useEffect(() => {
     fetchEventReplyList();
@@ -48,7 +44,7 @@ const EventReplyList = ({ eventCode }) => {
 
       const data = {
         eventCode,
-        eventReplyWriter: loginUser.userNickname,
+        eventReplyWriter: loginUserNickname,
         eventReplyContent,
       };
 
@@ -88,10 +84,9 @@ const EventReplyList = ({ eventCode }) => {
     });
   };
 
-
   return (
     <div>
-      {sessionStorage.getItem("userId") && (
+      {loginUserNickname && (
         <Form>
           <Form.Label
             classNameName="d-flex justify-content-left"
@@ -126,10 +121,14 @@ const EventReplyList = ({ eventCode }) => {
             <div className="u_cbox_info_base">
               <span className="u_cbox_date">{reply.regDate}</span>
               <span className="u_cbox_recomm_set">
-                {reply.eventReplyWriter === loginUser.userNickname &&
+                {reply.eventReplyWriter === loginUserNickname &&
                 reply.adminDeleted !== 1 &&
                 reply.userDeleted !== 1 ? (
-                  <Button onClick={() => handleReplyDelete(reply.eventReplyCode)}>삭제</Button>
+                  <Button
+                    onClick={() => handleReplyDelete(reply.eventReplyCode)}
+                  >
+                    삭제
+                  </Button>
                 ) : null}
               </span>
             </div>

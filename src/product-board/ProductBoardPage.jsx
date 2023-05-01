@@ -10,7 +10,7 @@ const ProductBoardPage = () => {
       <Routes>
         <Route path="/list" element={<ProductBoardList/>} />
         <Route path="/read/:productCode" element={<ProductBoardRead/>} />
-        <Route path="/insert/:userNickname" element={<ProductBoardInsert/>} />
+        <Route path="/insert" element={<ProductBoardInsert/>} />
       </Routes>
     </div>
   )

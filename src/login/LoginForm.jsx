@@ -2,13 +2,17 @@ import { Grid, TextField } from "@material-ui/core";
 import React, { useState } from "react";
 import { Button, Card, Form, Row } from "react-bootstrap";
 import { Link, useNavigate } from "react-router-dom";
-import { confirmInsert } from "../util/swal/confirmation";
-import { informDuplicationPassedUserId, informServerError } from "../util/swal/information";
+import { useUserStore } from "../model/user.store";
 import { login } from "../util/axios/login";
-import { failDuplicationCheckUserId } from "../util/swal/service.exception";
+import { confirmRestore } from "../util/swal/confirmation";
+import {
+  informDuplicationPassedUserId,
+  informServerError,
+} from "../util/swal/information";
 
 const LoginForm = () => {
   const navigate = useNavigate();
+  const fetchLoginUser = useUserStore((state) => state.fetchLoginUser);
   const [form, setForm] = useState({
     userId: "",
     userPass: "",
@@ -26,32 +30,30 @@ const LoginForm = () => {
   const handleLogin = async (e) => {
     e.preventDefault();
 
-    try {
-      const result = await login(form);
-
-      //id x
-      if (result.data === 0 || result.data === 3) {
-        informDuplicationPassedUserId();
-        setForm({
-          userId: "",
-          userPass: "",
-        });
-
-        //move to restore
-      } else if (result.data === 1) {
-        confirmInsert().then(async (result) => {
-          if (result.isConfirmed) {
-            navigate(`/login/restore/${userId}`);
-          }
-        });
-
-        //login success
-      } else if (result.data === 2) {
-        sessionStorage.setItem("userId", form.userId);
-        navigate("/");
-      }
-    } catch (e) {
+    const result = await login(form).catch(()=>{
       informServerError();
+    });
+
+    //id x
+    if (result.data === 0 || result.data === 3) {
+      informDuplicationPassedUserId();
+      setForm({
+        userId: "",
+        userPass: "",
+      });
+
+      //move to restore
+    } else if (result.data === 1) {
+      confirmRestore().then(async (result) => {
+        if (result.isConfirmed) {
+          navigate(`/login/restore/${userId}`);
+        }
+      });
+
+      //login success
+    } else if (result.data === 2) {
+      fetchLoginUser(userId); //작동잘 하고 있음.
+      navigate("/");
     }
   };
 

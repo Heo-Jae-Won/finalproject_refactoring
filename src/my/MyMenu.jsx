@@ -2,13 +2,18 @@ import React, { useContext, useState } from 'react';
 import { Button, Offcanvas, Row } from 'react-bootstrap';
 import { useNavigate } from 'react-router-dom';
 import { UserContext } from '../context/UserContext';
+import { useUserStore } from '../model/user.store';
 const MyMenu = () => {
     const navigate=useNavigate();
-    const { loginUser } = useContext(UserContext);
     const [show, setShow] = useState(false);
     const handleClose = () => setShow(false);
     const handleShow = () => setShow(true);
-    
+    const loginUserId = useUserStore(
+        (state) => state.loginUserId
+      );
+      const loginUserNickname = useUserStore(
+        (state) => state.loginUserNickname
+      );
     return (
 
         <div>
@@ -18,11 +23,11 @@ const MyMenu = () => {
                 </Offcanvas.Header>
                 <Offcanvas.Body>
                     <Row>
-                        <Button variant='secondary' className='my-5 ' onClick={() => navigate(`/my/info/${loginUser.uid}`)}>
+                        <Button variant='secondary' className='my-5 ' onClick={() => navigate(`/my/info/${loginUserId}`)}>
                             내 정보
                         </Button>
 
-                        <Button variant='secondary' className='my-5' onClick={() =>navigate(`/my/review?receiver=${loginUser.unickname}`)}>
+                        <Button variant='secondary' className='my-5' onClick={() =>navigate(`/my/review?receiver=${loginUserNickname}`)}>
                             내가 받은 리뷰
                         </Button>
 
@@ -30,11 +35,11 @@ const MyMenu = () => {
                             내 채팅
                         </Button>
 
-                        <Button variant='secondary' className='my-5' onClick={() => navigate(`/my/sell?seller=${loginUser.unickname}`)}>
+                        <Button variant='secondary' className='my-5' onClick={() => navigate(`/my/sell?seller=${loginUserNickname}`)}>
                             내 판매 내역
                         </Button>
 
-                        <Button variant='secondary' className='my-5' onClick={() => navigate(`/my/buy?buyer=${loginUser.unickname}`)}>
+                        <Button variant='secondary' className='my-5' onClick={() => navigate(`/my/buy?buyer=${loginUserNickname}`)}>
                             내 구매 내역
                         </Button>
 

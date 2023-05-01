@@ -1,12 +1,10 @@
 import 'bootstrap/dist/css/bootstrap.min.css';
-import { useState } from 'react';
 import { Route, Routes } from 'react-router-dom';
 import './App.css';
 import AboutPage from './basis/AboutPage';
 import FooterPage from './basis/FooterPage';
 import HeaderPage from './basis/HeaderPage';
 import HomePage from './basis/HomePage';
-import { UserContext } from './context/UserContext';
 import EventPage from './event/EventPage';
 
 import LoginPage from './login/LoginPage';
@@ -16,10 +14,7 @@ import ProductBoardPage from './product-board/ProductBoardPage';
 
 
 function App() {
-  const [loginUser, setLoginUser] = useState({});
-
   return (
-    <UserContext.Provider value={{ loginUser, setLoginUser }}>
       <div className="App">
         <HeaderPage />
         <Routes>
@@ -33,7 +28,6 @@ function App() {
         </Routes>
         <FooterPage />
       </div>
-    </UserContext.Provider>
   );
 }
 

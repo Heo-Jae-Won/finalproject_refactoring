@@ -1,10 +1,9 @@
 import { Grid, MenuItem, TextField } from "@material-ui/core";
-import { getMonth, getYear } from "date-fns";
+
 import React, { useState } from "react";
 import { Alert, Button, Card, Form, Row } from "react-bootstrap";
-import ReactDatePicker from "react-datepicker";
-import "react-datepicker/dist/react-datepicker.css";
-import DaumPostcode from "react-daum-postcode";
+
+
 import { useNavigate } from "react-router-dom";
 import { requireInput, requireValidationPass } from "../util/swal/requirement";
 import {
@@ -27,31 +26,16 @@ import {
 } from "../util/swal/information";
 import { confirmInsert } from "../util/swal/confirmation";
 import { checkEmailValid, checkPasswordValid, checkPhoneNumberValid } from "../util/regex/regex";
-import { range } from "range";
+import Address from "./Address";
+import Birth from "./Birth";
 
-const years = range(1930, getYear(new Date()) + 1, 1);
-const months = [
-  "January",
-  "February",
-  "March",
-  "April",
-  "May",
-  "June",
-  "July",
-  "August",
-  "September",
-  "October",
-  "November",
-  "December",
-];
+
+
 
 const LoginRegister = () => {
   const navigate = useNavigate();
-  const [userBirth, setUserBirth] = useState(new Date());
   const [message, setMessage] = useState("");
   const [image, setImage] = useState("https://dummyimage.com/300x300");
-  const [isPopupOpen, setIsPopupOpen] = useState(false);
-  const [address, setAddress] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [form, setForm] = useState({
     userId: "",
@@ -192,45 +176,11 @@ const LoginRegister = () => {
   };
 
   //주소 받는 API
-  const handlePostCode = (data) => {
-    let fullAddress = data.address;
-    let extraAddress = "";
 
-    if (data.addressType === "R") {
-      if (data.bname !== "") {
-        extraAddress += data.bname;
-      }
-      if (data.buildingName !== "") {
-        extraAddress +=
-          extraAddress !== "" ? `, ${data.buildingName}` : data.buildingName;
-      }
-      fullAddress += extraAddress !== "" ? ` (${extraAddress})` : "";
-    }
-    setAddress(fullAddress);
-  };
-
-  const postCodeStyle = {
-    display: "block",
-    position: "absolute",
-    top: "10%",
-    width: "600px",
-    height: "600px",
-    padding: "7px",
-  };
 
   return (
     <div>
-      <div className="modal-address">
-        {isPopupOpen && (
-          <div>
-            <DaumPostcode
-              style={postCodeStyle}
-              onClose={() => setIsPopupOpen(false)}
-              onComplete={handlePostCode}
-            />
-          </div>
-        )}
-      </div>
+     
 
       <Row className="d-flex justify-content-center my-5">
         <Card style={{ width: "30rem" }} className="p-3">
@@ -300,67 +250,7 @@ const LoginRegister = () => {
               />
             </Grid>
             <hr />
-            <Grid item xs={12}>
-              <ReactDatePicker
-                renderCustomHeader={({
-                  date,
-                  changeYear,
-                  changeMonth,
-                  decreaseMonth,
-                  increaseMonth,
-                  prevMonthButtonDisabled,
-                  nextMonthButtonDisabled,
-                }) => (
-                  <div
-                    style={{
-                      margin: 10,
-                      display: "flex",
-                      justifyContent: "center",
-                    }}
-                  >
-                    <button
-                      onClick={decreaseMonth}
-                      disabled={prevMonthButtonDisabled}
-                    >
-                      {"<"}
-                    </button>
-                    <select
-                      value={getYear(date)}
-                      onChange={({ target: { value } }) => changeYear(value)}
-                    >
-                      {years.map((option) => (
-                        <option key={option} value={option}>
-                          {option}
-                        </option>
-                      ))}
-                    </select>
-
-                    <select
-                      value={months[getMonth(date)]}
-                      onChange={({ target: { value } }) =>
-                        changeMonth(months.indexOf(value))
-                      }
-                    >
-                      {months.map((option) => (
-                        <option key={option} value={option}>
-                          {option}
-                        </option>
-                      ))}
-                    </select>
-
-                    <button
-                      onClick={increaseMonth}
-                      disabled={nextMonthButtonDisabled}
-                    >
-                      {">"}
-                    </button>
-                  </div>
-                )}
-                selected={userBirth}
-                maxDate={new Date()}
-                onChange={(date) => setUserBirth(date)}
-              />
-            </Grid>
+          <Birth/>
             <hr />
             <Grid item xs={12}>
               <TextField
@@ -376,34 +266,7 @@ const LoginRegister = () => {
               닉네임 중복확인
             </Button>
             <hr />
-            <Grid item xs={12}>
-              <TextField
-                value={address}
-                variant="outlined"
-                required
-                fullWidth
-                helperText="주소는 직접 입력이 불가능합니다"
-                FormHelperTextProps={{ style: { fontSize: 15 } }}
-                name="userAddress"
-                autoComplete="userAddress"
-                onChange={handleFormChange}
-              />
-            </Grid>
-            <Button
-              type="button"
-              style={{ marginRight: 60, marginTop: 25 }}
-              onClick={() => setIsPopupOpen(true)}
-            >
-              우편번호 검색
-            </Button>
-            <Button
-              className="postCode_btn"
-              style={{ marginLeft: 140, marginTop: 25, width: "5rem" }}
-              type="button"
-              onClick={() => setIsPopupOpen(false)}
-            >
-              닫기
-            </Button>
+        <Address/>
             <hr />
             <Grid item xs={12}>
               <TextField
