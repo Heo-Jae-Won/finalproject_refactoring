@@ -10,6 +10,7 @@ import {
   informServerError,
 } from "../../util/swal/information";
 import { failPaymentVerification } from "../../util/swal/service.exception";
+import { getUserInfo } from "../../util/axios/basis";
 
 /**
  * 결제 화면
@@ -17,12 +18,20 @@ import { failPaymentVerification } from "../../util/swal/service.exception";
 const MyPay = () => {
   const { productCode } = useParams();
   const navigate = useNavigate();
-  const loginUser = useUserStore((state) => state.loginUser);
   const [productInfo, SetProductInfo] = useState({
     productWriter: "",
     productPrice: "",
     productName: "",
   });
+  const [payerInfo, setPayerInfo] = useState({
+    realName: "",
+    phone: "",
+    email: "",
+    address: "",
+  });
+  const { realName, phone, email, address } = payerInfo;
+  const loginUserId = useUserStore((state) => state.loginUserId);
+  const loginUserNickname = useUserStore((state) => state.loginUserNickname);
 
   const handleDataExtract = useCallback(async () => {
     const result = await extractProductBoardRead(productCode).then(() => {
@@ -42,13 +51,21 @@ const MyPay = () => {
       name: productName, // 주문명 (필수항목)
       amount: productPrice, // 금액이고 반드시 숫자로 써야함. (필수항목)
       custom_data: { name: "부가정보", desc: "세부 부가정보" },
-      buyer_name: loginUser.uname, // 구매자 이름
-      buyer_tel: loginUser.userTel, // 구매자 전화번호 (필수항목)
-      buyer_email: loginUser.userEmail, // 구매자 이메일
-      buyer_addr: loginUser.userAddress,
+      buyer_name: realName, // 구매자 이름
+      buyer_tel: phone, // 구매자 전화번호 (필수항목)
+      buyer_email: email, // 구매자 이메일
+      buyer_addr: address,
     };
     IMP.request_pay(data, paymentCallback);
   };
+  const fetchPayerInfo = useCallback(async () => {
+    const result = await getUserInfo(loginUserId);
+    setPayerInfo(result.data);
+  }, [loginUserId]);
+
+  useEffect(() => {
+    fetchPayerInfo();
+  }, [fetchPayerInfo, loginUserId]);
 
   const paymentCallback = async (response) => {
     const {
@@ -78,7 +95,7 @@ const MyPay = () => {
       const formData = new FormData();
       formData.append("payPrice", paid_amount);
       formData.append("paySeller", productWriter);
-      formData.append("payBuyer", loginUser.userNickname);
+      formData.append("payBuyer", loginUserNickname);
       formData.append("payType", pay_method);
       formData.append("payEmail", buyer_email);
       formData.append("payCode", merchant_uid);
@@ -91,7 +108,7 @@ const MyPay = () => {
           confirmWriterReview().then(async (result) => {
             if (result.isConfirmed) {
               navigate(
-                `/my/review/insert/${merchant_uid}?seller=${productWriter}&buyer=${loginUser.userNickname}&productCode=${productCode}`
+                `/my/review/insert?seller=${productWriter}&productCode=${productCode}`
               );
             } else if (result.isDismissed) {
               navigate("/my/menu");

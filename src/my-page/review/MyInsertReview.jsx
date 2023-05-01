@@ -1,33 +1,34 @@
 import { Grid, TextField } from "@material-ui/core";
 import { Rating } from "@mui/material";
-import qs from "qs";
 import React, { useState } from "react";
 import { Button, ButtonGroup, Card, Form, Row } from "react-bootstrap";
-import { useLocation, useNavigate, useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
+import { useUserStore } from "../../model/user.store";
+import { insertReview } from "../../util/axios/my/review";
 import {
   informNoPayment,
   informServerError,
   informSuccess,
 } from "../../util/swal/information";
-import { insertReview } from "../../util/axios/my/review";
+import { useLocation } from "react-router-dom";
 
 /**
  * 리뷰 쓰기 화면
  */
 const MyInsertReview = () => {
   const [point, setPoint] = useState(5);
-  const location = useLocation();
   const navigate = useNavigate();
+  const location = useLocation();
+  const params = new URLSearchParams(location.search);
+  const seller = params.get("seller");
+  const productCode = params.get("productCode");
   const { payCode } = useParams();
-  const search = qs.parse(location.search, { ignoreQueryPrefix: true });
-  const seller = search.seller;
-  const buyer = search.buyer;
-  const productCode = search.productCode;
+  const loginUserNickname = useUserStore((state) => state.loginUserNickname);
 
   const [form, setForm] = useState({
     reviewContent: "",
-    reviewSender: buyer,
-    reviewReceiver: seller,
+    reviewSender: loginUserNickname, //myNickname
+    reviewReceiver: seller, //otherNickname
   });
 
   const { reviewContent, reviewReceiver, reviewSender } = form;

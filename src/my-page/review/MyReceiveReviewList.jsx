@@ -13,7 +13,7 @@ import { getReceivedReview } from "../../util/axios/my/review";
 const MyReceiveReviewList = () => {
   const navigate = useNavigate();
   const location = useLocation();
-  let params = new URLSearchParams(location.search);
+  const params = new URLSearchParams(location.search);
   let page = parseInt(params.get("page")) || 1;
   const loginUserNickname = useUserStore((state) => state.loginUserNickname);
   const [review, setReview] = useState(["aaa"]);

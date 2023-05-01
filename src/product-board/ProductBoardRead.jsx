@@ -1,6 +1,6 @@
 import { Card, Grid, TextField } from "@material-ui/core";
 import { Rating } from "@mui/material";
-import { collection, getFirestore, onSnapshot } from "firebase/firestore";
+import { collection, getFirestore } from "firebase/firestore";
 import React, { useCallback, useEffect, useState } from "react";
 import { Button, ButtonGroup, Form, Row, Spinner } from "react-bootstrap";
 import { useNavigate, useParams } from "react-router-dom";

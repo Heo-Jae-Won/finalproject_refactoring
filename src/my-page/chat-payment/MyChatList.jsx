@@ -1,5 +1,4 @@
 import { collection, deleteDoc, doc, getFirestore } from "firebase/firestore";
-import qs from "qs";
 import { default as React, useCallback, useEffect, useState } from "react";
 import { Button, Form, Row } from "react-bootstrap";
 import { useLocation, useNavigate } from "react-router-dom";
@@ -24,10 +23,12 @@ import "./MyChatList.scss";
 
 const MyChatList = () => {
   const db = getFirestore(app);
-  const location = useLocation();
   const navigate = useNavigate();
-  const search = qs.parse(location.search, { ignoreQueryPrefix: true });
-  const [productCode, setProductCode] = useState(search.productCode || "ab");
+  const location = useLocation();
+  let params = new URLSearchParams(location.search);
+  const [productCode, setProductCode] = useState(
+    params.get("productCode") || "ab"
+  );
   const [message, setMessage] = useState("");
   const [messageList, setMessageList] = useState([]);
   const [chatId, setChatId] = useState("init");

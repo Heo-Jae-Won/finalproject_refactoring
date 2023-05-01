@@ -1,4 +1,3 @@
-import qs from "qs";
 import React, { useCallback, useEffect, useState } from "react";
 import { Button, Spinner, Table } from "react-bootstrap";
 import Pagination from "react-js-pagination";
@@ -12,7 +11,7 @@ import { useUserStore } from "../../model/user.store";
 const MyBuyList = () => {
   const navigate = useNavigate();
   const location = useLocation();
-  let params = new URLSearchParams(location.search);
+  const params = new URLSearchParams(location.search);
   let page = parseInt(params.get("page")) || 1;
   const loginUserNickname = useUserStore((state) => state.loginUserNickname);
   const [buyList, setBuyList] = useState(["aaa"]);

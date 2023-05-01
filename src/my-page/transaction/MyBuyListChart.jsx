@@ -1,9 +1,7 @@
-import qs from "qs";
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import Chart from "react-google-charts";
-import { useLocation } from "react-router-dom";
-import { getTradeBuyChart } from "../../util/axios/my/trade";
 import { useUserStore } from "../../model/user.store";
+import { getTradeBuyChart } from "../../util/axios/my/trade";
 
 /**
  * 구매 목록 시각화 차트 화면

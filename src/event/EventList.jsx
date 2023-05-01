@@ -1,5 +1,4 @@
 import { MenuItem, TextField } from "@material-ui/core";
-import qs from "qs";
 import React, { useCallback, useEffect, useState } from "react";
 import { Spinner, Table } from "react-bootstrap";
 import Pagination from "react-js-pagination";
@@ -13,14 +12,15 @@ import EventItem from "./EventItem";
 
 const EventList = () => {
   const location = useLocation();
+  const params = new URLSearchParams(location.search);
+  let page = parseInt(params.get("page")) || 1;
   const navigate = useNavigate();
-  const search = qs.parse(location.search, { ignoreQueryPrefix: true });
   const [query, setQuery] = useState("");
   const [searchType, setSearchType] = useState("제목");
   const [eventList, setEventList] = useState([]);
   const [loading, setLoading] = useState(false);
   const [eventListTotal, setEventListTotal] = useState(1);
-  const page = parseInt(search.page) || 1;
+
   const num = 5;
 
   //이벤트 목록
