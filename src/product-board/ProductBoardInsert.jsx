@@ -7,7 +7,6 @@ import { insertProductBoard } from "../util/axios/product.board";
 import { confirmInsert } from "../util/swal/confirmation";
 import { informSuccess } from "../util/swal/information";
 import { requireInput } from "../util/swal/requirement";
-import { failFileUploadByType } from "../util/swal/service.exception";
 
 /**
  * 상품 게시판 등록
@@ -47,7 +46,7 @@ const ProductBoardInsert = () => {
       ...prev,
       file: e.target.files[0],
     }));
-    setImage(URL.createObjectURL(e.target.files[0]));
+    setImage(URL.createObjectURL(e.target.files[0]) || "");
   };
 
   const handleProductBoardInsert = async () => {
@@ -56,33 +55,30 @@ const ProductBoardInsert = () => {
       return;
     }
 
+    const data = {
+      productContent,
+      productTitle,
+      productPrice,
+      productWriter,
+      productImage,
+      productName,
+    };
     const formData = new FormData();
     formData.append("file", file);
-    formData.append("productContent", productContent);
-    formData.append("productTitle", productTitle);
-    formData.append("productPrice", productPrice);
-    formData.append("productWriter", productWriter);
-    formData.append("productImage", productImage);
-    formData.append("productName", productName);
+    formData.append(
+      "data",
+      new Blob([JSON.stringify(data)], {
+        type: "application/json",
+      })
+    );
 
     confirmInsert().then(async (result) => {
       if (result.isConfirmed) {
-
         //상품게시판 등록
-        await insertProductBoard(formData)
-          .then(() => {
-            informSuccess();
-            navigate("/productBoard/list");
-          })
-          .catch((error) => {
-            if (
-              error.response.data.includes(
-                "image file only accepted for jpeg,png"
-              )
-            ) {
-              failFileUploadByType();
-            }
-          });
+        await insertProductBoard(formData).then(() => {
+          informSuccess();
+          navigate("/productBoard/list");
+        });
       }
     });
   };

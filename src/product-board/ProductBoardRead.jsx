@@ -18,10 +18,7 @@ import {
 } from "../util/firebase/util";
 import { confirmDelete } from "../util/swal/confirmation";
 import { informServerError, informSuccess } from "../util/swal/information";
-import {
-  DeleteAlready,
-  failFileUploadBySize,
-} from "../util/swal/service.exception";
+import { DeleteAlready } from "../util/swal/service.exception";
 
 /**
  * 상품 조회
@@ -69,7 +66,7 @@ const ProductBoardRead = () => {
     const q = getFirebaseQuery(db, loginUserId);
 
     let rows = [];
-    
+
     //productCode를 query에 추가
     getOnSnapShotProductCode(q, rows);
     setComparisonProductCode(rows);
@@ -106,22 +103,32 @@ const ProductBoardRead = () => {
 
     informSuccess().then(async (result) => {
       if (result.isConfirmed) {
+        const data = {
+          productCode,
+          productContent,
+          productTitle,
+          productPrice,
+          productWriter,
+          productImage,
+          productName,
+        };
         const formData = new FormData();
         formData.append("file", file);
-        formData.append("productCode", productCode);
-        formData.append("productContent", productContent);
-        formData.append("productTitle", productTitle);
-        formData.append("productPrice", productPrice);
-        formData.append("productWriter", productWriter);
-        formData.append("productImage", productImage);
-        formData.append("productName", productName);
+        formData.append(
+          "data",
+          new Blob([JSON.stringify(data)], {
+            type: "application/json",
+          })
+        );
+
+        //data 확인
+        const myBlob = formData.get("data");
+        myBlob.text().then((text) => {
+          console.log(text);
+        });
 
         //상품 정보 수정
-        await updateProductBoard(formData).catch((e) => {
-          e.message === "Network Error"
-            ? failFileUploadBySize()
-            : informServerError();
-        });
+        await updateProductBoard(formData);
       }
     });
   };
