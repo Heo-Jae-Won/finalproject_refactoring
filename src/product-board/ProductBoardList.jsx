@@ -26,9 +26,10 @@ const ProductBoardList = () => {
     setLoading(true);
 
     //상품 게시판 목록
-    const result = await getProductBoardList(page, num, searchType, query);
-    setPostList(result.data.productList);
-    setProductListTotal(result.data.productListTotal);
+    const result = (await getProductBoardList(page, num, searchType, query))
+      .data;
+    setPostList(result.productList);
+    setProductListTotal(result.productListTotal);
     setLoading(false);
   }, [page, query, searchType]);
 
@@ -41,9 +42,9 @@ const ProductBoardList = () => {
   //ProductBoardItem에 props로 내려줄 함수
   const fetchProductLikeCnt = async () => {
     //상품별 좋아요 갯수 확인
-    const result = await getProductBoardList(page, num, searchType, query);
-    setPostList(result.data.productList);
-    setProductListTotal(result.data.productListTotal);
+    const result = (await getProductBoardList(page, num, searchType, query)).data;
+    setPostList(result.productList);
+    setProductListTotal(result.productListTotal);
   };
 
   useEffect(() => {

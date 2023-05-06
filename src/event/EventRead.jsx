@@ -22,20 +22,18 @@ const EventRead = () => {
     eventWriter: "",
     eventRegDate: "",
   });
-  
+
   //이벤트 조회
-  const fetchEventRead = useCallback( async () => {
+  const fetchEventRead = useCallback(async () => {
     setLoading(true);
-    const result = await getEventRead(eventCode);
-    setEventRead(result.data);
+    const result = (await getEventRead(eventCode)).data;
+    setEventRead(result);
     setLoading(false);
-  },[eventCode]);
+  }, [eventCode]);
 
   useEffect(() => {
     fetchEventRead();
   }, [fetchEventRead]);
-
-
 
   const { eventTitle, eventContent, eventWriter, eventRegDate } = eventRead;
 

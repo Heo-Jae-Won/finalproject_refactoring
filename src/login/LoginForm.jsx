@@ -34,12 +34,10 @@ const LoginForm = () => {
     e.preventDefault();
 
     //로그인
-    const result = await login(form).catch(() => {
-      informServerError();
-    });
+    const result = (await login(form)).data;
 
     //db에 정보가 없거나 비밀번호가 틀림
-    if (result.data === 0 || result.data === 3) {
+    if (result === 0 || result === 3) {
       informDuplicationPassedUserId();
       setForm({
         userId: "",
@@ -47,7 +45,7 @@ const LoginForm = () => {
       });
 
       //회원 탈퇴 상태
-    } else if (result.data === 1) {
+    } else if (result === 1) {
       confirmRestore().then(async (result) => {
         if (result.isConfirmed) {
           navigate(`/login/restore/${userId}`);
@@ -55,7 +53,7 @@ const LoginForm = () => {
       });
 
       //로그인 성공
-    } else if (result.data === 2) {
+    } else if (result === 2) {
       fetchLoginUser(userId);
       navigate("/");
     }

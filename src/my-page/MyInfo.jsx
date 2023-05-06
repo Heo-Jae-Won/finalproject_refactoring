@@ -23,7 +23,7 @@ const MyInfo = () => {
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState("");
   const { userId } = useParams();
-  const address=useAddressStore((state)=>state.address);
+  const address = useAddressStore((state) => state.address);
   const [form, setForm] = useState({
     userId: userId,
     userPass: "",
@@ -71,9 +71,9 @@ const MyInfo = () => {
     setLoading(true);
 
     //내 정보 조회
-    const result = await getUserId(userId);
-    setImage(result.data.userProfile);
-    setForm(result.data);
+    const result = (await getUserId(userId)).data;
+    setImage(result.userProfile);
+    setForm(result);
     setLoading(false);
   }, [userId]);
 
@@ -86,7 +86,6 @@ const MyInfo = () => {
 
     confirmUpdate().then(async (result) => {
       if (result.isConfirmed) {
-
         const data = {
           userId: userId,
           userNickname: userNickname,
@@ -98,13 +97,9 @@ const MyInfo = () => {
         };
 
         //내 정보 수정
-        await updateUserInfo(data)
-          .then(() => {
-            informSuccess();
-          })
-          .catch(() => {
-            informServerError();
-          });
+        await updateUserInfo(data).then(() => {
+          informSuccess();
+        });
       }
     });
   };
@@ -112,7 +107,6 @@ const MyInfo = () => {
   const handleUserDeactivate = () => {
     confirmDeactivate().then(async (result) => {
       if (result.isConfirmed) {
-
         //회원 탈퇴
         await getUserStatus(userId).then(() => {
           informSuccess();

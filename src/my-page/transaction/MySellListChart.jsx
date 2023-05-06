@@ -31,8 +31,8 @@ const MySellListChart = () => {
   //fetch data from db + put it in state variable
   const fetchTradeSellChartData = useCallback(async () => {
     //판매 목록 차트
-    let result = await getTradeSellChart(loginUserNickname);
-    let array = toArrayTradeBuyChartData(result.data.sellListChart);
+    let result = (await getTradeSellChart(loginUserNickname)).data;
+    let array = toArrayTradeBuyChartData(result.sellListChart);
     setData(array);
   }, [loginUserNickname]);
 

@@ -47,15 +47,13 @@ const LoginFindPass = () => {
     }
 
     //임시비밀번호 발송
-    const result = await sendTempPassword(form).catch(()=>{
-      informServerError();
-    });
+    const result = (await sendTempPassword(form)).data;
 
-    if (result.data === 1) {
+    if (result === 1) {
       informDuplicationPassedUserId();
-    } else if (result.data === 2) {
+    } else if (result === 2) {
       failFindUserEmail();
-    } else if (result.data === 3) {
+    } else if (result === 3) {
       informSendingTempPassword();
       navigate("/login/form");
     }

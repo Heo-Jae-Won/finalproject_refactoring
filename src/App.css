@@ -280,13 +280,7 @@ div .item>p {
   margin-top: -250px;
 }
 
-.box13 {
-  transition: 1s;
-}
 
-.box13:hover {
-  transform: skew(-30deg);
-}
 
 .ppp {
   text-align: left;

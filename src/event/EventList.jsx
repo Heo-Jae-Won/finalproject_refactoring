@@ -21,7 +21,7 @@ const EventList = () => {
   const [loading, setLoading] = useState(false);
   const [eventListTotal, setEventListTotal] = useState(1);
 
-  const num = 5;
+  const num = 6;
 
   //이벤트 목록
   const fetchEventList = useCallback(async () => {

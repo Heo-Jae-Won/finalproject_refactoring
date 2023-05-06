@@ -50,11 +50,9 @@ const MyInsertReview = () => {
     formData.append("productCode", productCode);
 
     //리뷰 등록
-    const result = await insertReview(formData).catch(() => {
-      informServerError();
-    });
+    const result = (await insertReview(formData)).data;
 
-    if (result.data === 1) {
+    if (result === 1) {
       informSuccess();
       navigate("/my/menu");
     } else {

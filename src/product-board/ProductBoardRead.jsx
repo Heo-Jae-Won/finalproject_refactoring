@@ -61,7 +61,7 @@ const ProductBoardRead = () => {
     setLoading(true);
 
     //실제 존재하는 상품 여부 확인
-    const result = await getProductBoardRead(productCode);
+    const result = (await getProductBoardRead(productCode)).data;
 
     const q = getFirebaseQuery(db, loginUserId);
 
@@ -73,8 +73,8 @@ const ProductBoardRead = () => {
 
     //팔리거나 삭제되면 접근 불가 조치
     if (result.data.productStatus === 0) {
-      setPostRead(result.data);
-      setImage(result.data.productImage);
+      setPostRead(result);
+      setImage(result.productImage);
     } else {
       DeleteAlready();
       let seconds_ms = 1000;
@@ -138,14 +138,10 @@ const ProductBoardRead = () => {
     confirmDelete().then(async (result) => {
       if (result.isConfirmed) {
         //상품 정보 삭제
-        await deleteProductBoard(productCode)
-          .then(() => {
-            informSuccess();
-            navigate("/productBoard/list");
-          })
-          .catch(() => {
-            informServerError();
-          });
+        await deleteProductBoard(productCode).then(() => {
+          informSuccess();
+          navigate("/productBoard/list");
+        });
       }
     });
   };

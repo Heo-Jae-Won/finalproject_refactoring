@@ -10,16 +10,16 @@ import { informServerError, informSuccess } from "../util/swal/information";
 
 const EventReplyList = ({ eventCode }) => {
   const [eventReplyList, setEventReplyList] = useState([]);
-  const [page, setPage] = useState(1);
   const [eventReplyTotal, setEventReplyTotal] = useState(0);
+  const [page, setPage] = useState(1);
   const [eventReplyContent, setEventReplyContent] = useState("");
   const loginUserNickname = useUserStore((state) => state.loginUserNickname);
   const num = 6;
 
   const fetchEventReplyList = useCallback(async () => {
-    const result = await getReplyList(eventCode, page, num);
-    setEventReplyList(result.data.eventReplyList);
-    setEventReplyTotal(result.data.eventReplyTotal);
+    const result = (await getReplyList(eventCode, page, num)).data;
+    setEventReplyList(result.eventReplyList);
+    setEventReplyTotal(result.eventReplyTotal);
   }, [eventCode, page]);
 
   useEffect(() => {
@@ -48,33 +48,24 @@ const EventReplyList = ({ eventCode }) => {
         eventReplyWriter: loginUserNickname,
         eventReplyContent,
       };
-      
+
       //댓글 등록
-      await insertReply(data)
-        .then(() => {
-          setPage(page);
-          fetchEventReplyList();
-          setEventReplyContent("");
-        })
-        .catch(() => {
-          informServerError();
-        });
+      await insertReply(data).then(() => {
+        setPage(page);
+        fetchEventReplyList();
+        setEventReplyContent("");
+      });
     }
   };
 
   const handleReplyDelete = async (eventReplyCode) => {
     confirmDelete().then(async (result) => {
       if (result.isConfirmed) {
-
         //댓글 삭제
-        await deleteReply(eventReplyCode)
-          .then(() => {
-            informSuccess();
-            fetchEventReplyList();
-          })
-          .catch(() => {
-            informServerError();
-          });
+        await deleteReply(eventReplyCode).then(() => {
+          informSuccess();
+          fetchEventReplyList();
+        });
       }
     });
   };

@@ -19,15 +19,15 @@ const NoticeList = () => {
   const [noticeList, setNoticeList] = useState([]);
   const [loading, setLoading] = useState(false);
   const [noticeListTotal, setNoticeListTotal] = useState(1);
-  const num = 5;
+  const num = 6;
 
   const fetchNoticeList = useCallback(async () => {
     setLoading(true);
 
     //공지사항 목록
-    const result = await getNoticeList(page, num, searchType, query);
-    setNoticeList(result.data.noticeList);
-    setNoticeListTotal(result.data.noticeListTotal);
+    const result = (await getNoticeList(page, num, searchType, query)).data;
+    setNoticeList(result.noticeList);
+    setNoticeListTotal(result.noticeListTotal);
     setLoading(false);
   }, [page, query, searchType]);
 

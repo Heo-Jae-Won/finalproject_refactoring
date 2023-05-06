@@ -30,8 +30,8 @@ const MyBuyListChart = () => {
 
   const fetchTradeBuyChartData = useCallback(async () => {
     //구매 목록 차트
-    let result = await getTradeBuyChart(loginUserNickname);
-    let array = toArrayTradeBuyChartData(result.data.buyListChart);
+    let result = (await getTradeBuyChart(loginUserNickname)).data;
+    let array = toArrayTradeBuyChartData(result.buyListChart);
     setData(array);
   }, [loginUserNickname]);
 

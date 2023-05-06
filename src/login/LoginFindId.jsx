@@ -33,18 +33,16 @@ const LoginFindId = () => {
     }
 
     //아이디 찾기
-    const result = await findUserId(userEmail, userName).catch(()=>{
-      informServerError();
-    });
+    const result = (await findUserId(userEmail, userName)).data;
 
-    if (!result.data) {
+    if (!result) {
       setForm({
         userName: "",
         userEmail: "",
       });
       setMessage("검색된 아이디가 없습니다");
     } else {
-      setMessage("아이디는 " + result.data + "입니다");
+      setMessage("아이디는 " + result + "입니다");
     }
   };
 

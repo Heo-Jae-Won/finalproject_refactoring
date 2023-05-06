@@ -21,16 +21,15 @@ import {
  * 내 비밀번호 수정 화면
  */
 const MyUpdatePass = () => {
-  const navigate=useNavigate();
+  const navigate = useNavigate();
   const [confirmPassword, setConfirmPassword] = useState("");
-  const [isChecked, setIsChecked] = useState(false);
   const loginUserId = useUserStore((state) => state.loginUserId);
   const [form, setForm] = useState({
     userId: loginUserId,
     userPass: "",
   });
-
   const { userId, userPass } = form;
+  let isChecked = false;
 
   const handleFormChange = (e) => {
     setForm((prev) => ({
@@ -50,7 +49,7 @@ const MyUpdatePass = () => {
       informNotEqualPassword();
     } else if (userPass === confirmPassword) {
       informEqualPassword();
-      setIsChecked(true);
+      isChecked = true;
     }
   };
 
@@ -65,16 +64,14 @@ const MyUpdatePass = () => {
         };
 
         //비밀번호 수정
-        await updatePassword(data)
-          .then(() => {
-            informSuccess();
-            navigate(`/my/info/${loginUserId}`);
-          })
-   
+        await updatePassword(data).then(() => {
+          informSuccess();
+          navigate(`/my/info/${loginUserId}`);
+        });
       }
       //취소 click.
       else if (result.isDismissed) {
-        setIsChecked(false);
+        isChecked = false;
       }
     });
   };

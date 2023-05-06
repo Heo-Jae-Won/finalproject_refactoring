@@ -16,17 +16,17 @@ const MyReceiveReviewList = () => {
   const params = new URLSearchParams(location.search);
   let page = parseInt(params.get("page")) || 1;
   const loginUserNickname = useUserStore((state) => state.loginUserNickname);
-  const [review, setReview] = useState(["aaa"]);
-  const [total, setTotal] = useState(0);
+  const [review, setReview] = useState([]);
+  const [reviewTotal, setReviewTotal] = useState(0);
   const [loading, setLoading] = useState(false);
 
   const fetchReceivedReviewList = useCallback(async () => {
     setLoading(true);
 
     //받은 리뷰 보기
-    const result = await getReceivedReview(page, loginUserNickname);
-    setReview(result.data.reviewList);
-    setTotal(result.data.reviewListTotal);
+    const result = (await getReceivedReview(page, loginUserNickname)).data;
+    setReview(result.reviewList);
+    setReviewTotal(result.reviewListTotal);
     setLoading(false);
   }, [page, loginUserNickname]);
 
@@ -84,7 +84,7 @@ const MyReceiveReviewList = () => {
           <Pagination
             activePage={page}
             itemsCountPerPage={6}
-            totalItemsCount={total}
+            totalItemsCount={reviewTotal}
             pageRangeDisplayed={10}
             prevPageText={"‹"}
             nextPageText={"›"}

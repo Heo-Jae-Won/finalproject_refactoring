@@ -14,8 +14,8 @@ const BestList = () => {
   const [bestList, setBestList] = useState([]);
 
   const fetchProductBoardBest = async () => {
-    const result = await getProductBoardBest();
-    setBestList(result.data);
+    const result = (await getProductBoardBest()).data;
+    setBestList(result);
   };
 
   useEffect(() => {

@@ -76,8 +76,8 @@ const LoginRegister = () => {
     }
 
     //닉네임 중복 확인
-    const result = await checkDuplicationUserNickname(userNickname);
-    result.data === 1
+    const result = (await checkDuplicationUserNickname(userNickname)).data;
+    result === 1
       ? informDuplicationUserNicknamePass()
       : failDuplicationCheckUserNickname();
   };
@@ -97,8 +97,8 @@ const LoginRegister = () => {
     }
 
     //아이디 중복 확인
-    const result = await checkDuplicationUserId(userId);
-    !result.data ? informUseableUserId() : failDuplicationCheckUserId();
+    const result = (await checkDuplicationUserId(userId)).data;
+    !result ? informUseableUserId() : failDuplicationCheckUserId();
   };
 
   const handleFormChange = (e) => {
@@ -133,6 +133,16 @@ const LoginRegister = () => {
       return;
     }
 
+    if (!file) {
+      requireInput();
+      return;
+    }
+
+    if (!["image/jpeg", "image/png"].includes(file["type"])) {
+      alert("이미지는 jpeg, png만 가능합니다.");
+      return;
+    }
+
     confirmInsert().then(async (result) => {
       if (result.isConfirmed) {
         //   //인증번호 확인
@@ -144,34 +154,33 @@ const LoginRegister = () => {
         //   informFailedAuthentication();
         //   return;
         // }
+        const data = {
+          userId,
+          userPass,
+          userName,
+          userNickname,
+          userEmail,
+          userTel,
+          userAddress: address,
+          userStatus,
+          userGender,
+          userBirth: birth,
+        };
+
         const formData = new FormData();
-        formData.append("userId", userId);
-        formData.append("userPass", userPass);
-        formData.append("userName", userName);
-        formData.append("userNickname", userNickname);
-        formData.append("userEmail", userEmail);
-        formData.append("userTel", userTel);
-        formData.append("userAddress", address);
         formData.append("file", file);
-        formData.append("userStatus", userStatus);
-        formData.append("userGender", userGender);
-        formData.append("userBirth", birth);
+        formData.append(
+          "data",
+          new Blob([JSON.stringify(data)], {
+            type: "application/json",
+          })
+        );
 
         //회원가입
-        await saveUser(formData)
-          .then(() => {
-            informSuccess();
-            navigate("/login/form");
-          })
-          .catch((error) => {
-            if (
-              error.response.data.includes(
-                "imagefile only accepted for jpeg,png"
-              )
-            ) {
-              failFileUploadByType();
-            }
-          });
+        await saveUser(formData).then(() => {
+          informSuccess();
+          navigate("/login/form");
+        });
       }
     });
   };

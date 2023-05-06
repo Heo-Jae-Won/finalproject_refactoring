@@ -32,20 +32,20 @@ const HeaderPage = () => {
         expand="lg"
       >
         <Container>
-          <Navbar.Brand className="box13" onClick={handleClick} href="/">
+          <Navbar.Brand className="box13" onClick={(e)=>handleClick(e)} href="/">
             물론마켓
           </Navbar.Brand>
           <Nav className="me-auto" navbarScroll>
-            <Nav.Link className="box13" onClick={handleClick} href="/about">
+            <Nav.Link className="box13"  onClick={(e)=>handleClick(e)} href="/about">
               회사소개
             </Nav.Link>
             <NavDropdown title="상품" id="navbarScrollingDropdown">
-              <NavDropdown.Item onClick={handleClick} href="/productBoard/list">
+              <NavDropdown.Item  onClick={(e)=>handleClick(e)} href="/productBoard/list">
                 상품 목록
               </NavDropdown.Item>
               {loginUserNickname && (
                 <NavDropdown.Item
-                  onClick={handleClick}
+                   onClick={(e)=>handleClick(e)}
                   href={`/productBoard/insert`}
                 >
                   상품 등록
@@ -56,14 +56,14 @@ const HeaderPage = () => {
             <Nav.Link
               className="box13"
               href={`/notice/list`}
-              onClick={handleClick}
+               onClick={(e)=>handleClick(e)}
             >
               공지사항
             </Nav.Link>
             <Nav.Link
               className="box13"
               href={`/event/list`}
-              onClick={handleClick}
+               onClick={(e)=>handleClick(e)}
             >
               이벤트
             </Nav.Link>
@@ -71,14 +71,14 @@ const HeaderPage = () => {
           <Nav>
             {loginUserNickname ? (
               <>
-                <Nav.Link href={`/my/menu`} onClick={handleClick}>
+                <Nav.Link href={`/my/menu`}  onClick={(e)=>handleClick(e)}>
                   {loginUserNickname}
                 </Nav.Link>
 
                 <Nav.Link onClick={handleLogoutClick}>로그아웃</Nav.Link>
               </>
             ) : (
-              <Nav.Link onClick={handleClick} href="/login/form">
+              <Nav.Link  onClick={(e)=>handleClick(e)} href="/login/form">
                 로그인
               </Nav.Link>
             )}

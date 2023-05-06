@@ -15,16 +15,16 @@ const MySellList = () => {
   let page = parseInt(params.get("page")) || 1;
   const loginUserNickname = useUserStore((state) => state.loginUserNickname);
   const [sellList, setSellList] = useState(["aaa"]);
-  const [total, setTotal] = useState(1);
+  const [sellListTotal, setSellListTotal] = useState(1);
   const [loading, setLoading] = useState(false);
 
   const fetchSellList = useCallback(async () => {
     setLoading(true);
 
     //판매 목록
-    const result = await getTradeSellList(loginUserNickname, page);
-    setSellList(result.data.sellList);
-    setTotal(result.data.sellListTotal);
+    const result = (await getTradeSellList(loginUserNickname, page)).data;
+    setSellList(result.sellList);
+    setSellListTotal(result.sellListTotal);
     setLoading(false);
   }, [page, loginUserNickname]);
 
@@ -98,7 +98,7 @@ const MySellList = () => {
           <Pagination
             activePage={page}
             itemsCountPerPage={6}
-            totalItemsCount={total}
+            totalItemsCount={sellListTotal}
             pageRangeDisplayed={10}
             prevPageText={"‹"}
             nextPageText={"›"}

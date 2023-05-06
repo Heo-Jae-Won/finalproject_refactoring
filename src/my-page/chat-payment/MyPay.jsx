@@ -34,9 +34,8 @@ const MyPay = () => {
   const loginUserNickname = useUserStore((state) => state.loginUserNickname);
 
   const handleDataExtract = useCallback(async () => {
-    const result = await extractProductBoardRead(productCode).then(() => {
-      SetProductInfo(result.data);
-    });
+    const result = (await extractProductBoardRead(productCode)).data;
+    SetProductInfo(result);
   }, [productCode]);
 
   const { productWriter, productPrice, productName } = productInfo;
@@ -59,8 +58,8 @@ const MyPay = () => {
     IMP.request_pay(data, paymentCallback);
   };
   const fetchPayerInfo = useCallback(async () => {
-    const result = await getUserInfo(loginUserId);
-    setPayerInfo(result.data);
+    const result = (await getUserInfo(loginUserId)).data;
+    setPayerInfo(result);
   }, [loginUserId]);
 
   useEffect(() => {
@@ -78,17 +77,12 @@ const MyPay = () => {
       paid_amount,
     } = response;
 
-    const result = await getPaymentId(imp_uid)
-      .then(() => {
-        if (result.data.response.amount === paid_amount) {
-          console.log("검증 완료");
-        } else {
-          failPaymentVerification();
-        }
-      })
-      .catch(() => {
-        informServerError();
-      });
+    const result = (await getPaymentId(imp_uid)).data;
+    if (result.data.response.amount === paid_amount) {
+      console.log("검증 완료");
+    } else {
+      failPaymentVerification();
+    }
 
     //pay done
     if (success) {
@@ -102,22 +96,17 @@ const MyPay = () => {
       formData.append("productCode", productCode);
 
       //결제정보를 db에 저장
-      await payProduct(formData)
-        .then(() => {
-          //결제후기 쓰러가기
-          confirmWriterReview().then(async (result) => {
-            if (result.isConfirmed) {
-              navigate(
-                `/my/review/insert?seller=${productWriter}&productCode=${productCode}`
-              );
-            } else if (result.isDismissed) {
-              navigate("/my/menu");
-            }
-          });
-        })
-        .catch(() => {
-          informServerError();
-        });
+      await payProduct(formData);
+      //결제후기 쓰러가기
+      confirmWriterReview().then(async (result) => {
+        if (result.isConfirmed) {
+          navigate(
+            `/my/review/insert?seller=${productWriter}&productCode=${productCode}`
+          );
+        } else {
+          navigate("/my/menu");
+        }
+      });
     } else {
       informFailedPayment(error_msg);
     }

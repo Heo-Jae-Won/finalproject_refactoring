@@ -55,6 +55,11 @@ const ProductBoardInsert = () => {
       return;
     }
 
+    if (!["image/jpeg", "image/png"].includes(file["type"])) {
+      alert("이미지는 jpeg, png만 가능합니다.");
+      return;
+    }
+
     const data = {
       productContent,
       productTitle,

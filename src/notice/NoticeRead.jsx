@@ -23,18 +23,18 @@ const NoticeRead = () => {
     setLoading(true);
 
     //공지사항 조회
-    const result = await getNoticeRead(noticeCode);
-    setNoticeRead(result.data);
+    const result = (await getNoticeRead(noticeCode)).data;
+    setNoticeRead(result);
     setLoading(false);
   }, [noticeCode]);
 
   const { noticeTitle, noticeContent, noticeWriter, noticeRegDate } =
     noticeRead;
 
-    useEffect(() => {
-      fetchNoticeRead();
+  useEffect(() => {
+    fetchNoticeRead();
   }, [fetchNoticeRead]);
-  
+
   if (loading)
     return (
       <Spinner
@@ -43,8 +43,6 @@ const NoticeRead = () => {
         style={{ width: "20rem", height: "20rem", marginTop: "220px" }}
       />
     );
-
-
 
   return (
     <div className="event_notice">
