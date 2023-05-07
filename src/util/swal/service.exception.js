@@ -53,12 +53,3 @@ export const failFileUploadByType = () => {
     })
 }
 
-
- export const failFindUserEmail = () => {
-    return Swal.fire({
-         text: "입력하신 이메일은 가입되지 않은 이메일입니다",
-         icon: 'warning',
-         confirmButtonColor: '#3085d6',
-         cancelButtonColor: '#d33',
-     })
- }

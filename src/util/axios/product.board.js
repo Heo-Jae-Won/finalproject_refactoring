@@ -51,12 +51,12 @@ export const deleteProductBoard = (productCode) => {
 };
 
 export const getProductBoardLikeByUser = (productCode, userNickname) => {
-  console.log(productCode);
   return instance({
     url: `/productBoard/like/${productCode}/${userNickname}`,
     method: "get",
   });
 };
+
 
 export const onClickLike = (Object) => {
   return instance({
@@ -68,7 +68,7 @@ export const onClickLike = (Object) => {
 
 export const onClickDislike = (Object) => {
   return instance({
-    url: "/productBoard/user/like",
+    url: "/productBoard/user/dislike",
     method: "patch",
     data: Object,
   });
