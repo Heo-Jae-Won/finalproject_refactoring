@@ -8,15 +8,20 @@ export const useUserStore = create(
       loginUserNickname: "",
       loginUserProfile: "",
       fetchLoginUser: async (userId) => {
-        const result = await getUserInfo(userId);
+        const result = (await getUserInfo(userId)).data;
         set({
-          loginUserId: result.data.userId,
-          loginUserNickname: result.data.userNickname,
-          loginUserProfile: result.data.loginUserProfile,
+          loginUserId: result.userId,
+          loginUserNickname: result.userNickname,
+          loginUserProfile: result.loginUserProfile,
         });
       },
-      deleteEverything: () => set({}, true),
-    }), 
+      deleteEverything: () =>
+        set({
+          loginUserId: "",
+          loginUserNickname: "",
+          loginUserProfile: "",
+        }),
+    }),
     {
       name: "user", // unique name
       storage: createJSONStorage(() => sessionStorage), // (optional) by default, 'localStorage' is used

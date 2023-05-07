@@ -5,20 +5,17 @@ import { Link, useNavigate } from "react-router-dom";
 import { useUserStore } from "../model/user.store";
 import { login } from "../util/axios/login";
 import { confirmRestore } from "../util/swal/confirmation";
-import {
-  informDuplicationPassedUserId,
-  informServerError,
-} from "../util/swal/information";
+import { informNoData } from "../util/swal/information";
 
 /**
  * 로그인 화면
  */
 const LoginForm = () => {
   const navigate = useNavigate();
-  const fetchLoginUser = useUserStore((state) => state.fetchLoginUser);
+  const { fetchLoginUser } = useUserStore();
   const [form, setForm] = useState({
-    userId: "",
-    userPass: "",
+    userId: "hjw",
+    userPass: "a1234567",
   });
 
   const { userId, userPass } = form;
@@ -37,15 +34,15 @@ const LoginForm = () => {
     const result = (await login(form)).data;
 
     //db에 정보가 없거나 비밀번호가 틀림
-    if (result === 0 || result === 3) {
-      informDuplicationPassedUserId();
+    if (result === 0) {
+      informNoData();
       setForm({
         userId: "",
         userPass: "",
       });
 
       //회원 탈퇴 상태
-    } else if (result === 1) {
+    } else if (result === 2) {
       confirmRestore().then(async (result) => {
         if (result.isConfirmed) {
           navigate(`/login/restore/${userId}`);
@@ -53,7 +50,12 @@ const LoginForm = () => {
       });
 
       //로그인 성공
-    } else if (result === 2) {
+    } else {
+      if (typeof fetchLoginUser === "function") {
+        console.log("펑션임 ㅇㅇ");
+      } else {
+        console.log("왜 아님?");
+      }
       fetchLoginUser(userId);
       navigate("/");
     }

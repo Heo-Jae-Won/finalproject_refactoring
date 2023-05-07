@@ -2,9 +2,9 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import React from "react";
 import { Button } from "react-bootstrap";
 import { useNavigate, useParams } from "react-router-dom";
-import { confirmRestore } from "../util/swal/confirmation";
 import { restoreUser } from "../util/axios/login";
-import { informServerError, informSuccess } from "../util/swal/information";
+import { confirmRestore } from "../util/swal/confirmation";
+import { informSuccess } from "../util/swal/information";
 
 /**
  * 회원복구 화면

@@ -3,6 +3,7 @@ import { Alert, Button, Form, Row, Spinner } from "react-bootstrap";
 import { useNavigate, useParams } from "react-router-dom";
 import Address from "../login/Address";
 import { useAddressStore } from "../model/address.store";
+import { useUserStore } from "../model/user.store";
 import {
   getUserId,
   getUserNickname,
@@ -11,7 +12,7 @@ import {
 } from "../util/axios/my/user";
 import { checkEmailValid, checkPhoneNumberValid } from "../util/regex/regex";
 import { confirmDeactivate, confirmUpdate } from "../util/swal/confirmation";
-import { informServerError, informSuccess } from "../util/swal/information";
+import { informSuccess } from "../util/swal/information";
 import { requireInput, requireValidationPass } from "../util/swal/requirement";
 
 /**
@@ -24,6 +25,7 @@ const MyInfo = () => {
   const [message, setMessage] = useState("");
   const { userId } = useParams();
   const address = useAddressStore((state) => state.address);
+  const deleteEverything = useUserStore((state) => state.deleteEverything);
   const [form, setForm] = useState({
     userId: userId,
     userPass: "",
@@ -64,7 +66,10 @@ const MyInfo = () => {
       ...prev,
       file: e.target.files[0],
     }));
-    setImage(URL.createObjectURL(e.target.files[0]));
+    if (typeof e.target.files[0] !== "undefined") {
+      const url = URL.createObjectURL(e.target.files[0]);
+      setImage(url);
+    }
   };
 
   const fetchUserInfo = useCallback(async () => {
@@ -110,7 +115,7 @@ const MyInfo = () => {
         //회원 탈퇴
         await getUserStatus(userId).then(() => {
           informSuccess();
-          sessionStorage.removeItem("userId");
+          deleteEverything();
           navigate("/");
         });
       }

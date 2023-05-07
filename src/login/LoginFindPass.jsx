@@ -3,14 +3,12 @@ import React, { useState } from "react";
 import { Alert, Button, Card, Form, Row } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
 import { sendTempPassword } from "../util/axios/login";
+import { checkEmailValid } from "../util/regex/regex";
 import {
-  informDuplicationPassedUserId,
-  informSendingTempPassword,
-  informServerError,
+  informNotValid,
+  informSendingTempPassword
 } from "../util/swal/information";
 import { requireInput, requireValidationPass } from "../util/swal/requirement";
-import { failFindUserEmail } from "../util/swal/service.exception";
-import { checkEmailValid } from "../util/regex/regex";
 
 /**
  * 비밀번호 찾는 화면
@@ -49,11 +47,9 @@ const LoginFindPass = () => {
     //임시비밀번호 발송
     const result = (await sendTempPassword(form)).data;
 
-    if (result === 1) {
-      informDuplicationPassedUserId();
-    } else if (result === 2) {
-      failFindUserEmail();
-    } else if (result === 3) {
+    if (result === 0) {
+      informNotValid();
+    } else if (result === 1) {
       informSendingTempPassword();
       navigate("/login/form");
     }
