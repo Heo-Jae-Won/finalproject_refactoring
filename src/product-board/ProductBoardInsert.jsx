@@ -46,7 +46,10 @@ const ProductBoardInsert = () => {
       ...prev,
       file: e.target.files[0],
     }));
-    setImage(URL.createObjectURL(e.target.files[0]) || "");
+    if (typeof e.target.files[0] !== "undefined") {
+      const url = URL.createObjectURL(e.target.files[0]);
+      setImage(url);
+    }
   };
 
   const handleProductBoardInsert = async () => {

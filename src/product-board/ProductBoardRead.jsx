@@ -17,7 +17,7 @@ import {
   getOnSnapShotProductCode,
 } from "../util/firebase/util";
 import { confirmDelete } from "../util/swal/confirmation";
-import { informServerError, informSuccess } from "../util/swal/information";
+import { informSuccess } from "../util/swal/information";
 import { DeleteAlready } from "../util/swal/service.exception";
 
 /**
@@ -72,7 +72,7 @@ const ProductBoardRead = () => {
     setComparisonProductCode(rows);
 
     //팔리거나 삭제되면 접근 불가 조치
-    if (result.data.productStatus === 0) {
+    if (result.productStatus === 0) {
       setPostRead(result);
       setImage(result.productImage);
     } else {
@@ -95,7 +95,10 @@ const ProductBoardRead = () => {
       ...postRead,
       file: e.target.files[0],
     }));
-    setImage(URL.createObjectURL(e.target.files[0]));
+    if (typeof e.target.files[0] !== "undefined") {
+      const url = URL.createObjectURL(e.target.files[0]);
+      setImage(url);
+    }
   };
 
   const handleProductBoardUpdate = (e) => {
@@ -261,7 +264,6 @@ const ProductBoardRead = () => {
                 autoComplete="productPrice"
               />
             </Grid>
-
             <hr />
             <Grid item xs={12}>
               <TextField

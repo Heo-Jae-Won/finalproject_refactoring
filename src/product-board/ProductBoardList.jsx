@@ -1,5 +1,5 @@
 import { MenuItem, TextField } from "@material-ui/core";
-import React, { useEffect, useState, useCallback } from "react";
+import React, { useEffect, useState, useCallback, useRef } from "react";
 import { Row, Spinner } from "react-bootstrap";
 import Pagination from "react-js-pagination";
 import { useLocation, useNavigate } from "react-router-dom";
@@ -10,7 +10,7 @@ import ProductBoardItem from "./ProductBoardItem";
 /**
  * 상품 게시판 목록
  */
-const ProductBoardList = () => {
+const ProductBoardList =  () => {
   const location = useLocation();
   const params = new URLSearchParams(location.search);
   let page = parseInt(params.get("page")) || 1;
@@ -21,7 +21,6 @@ const ProductBoardList = () => {
   const [query, setQuery] = useState("");
   const [searchType, setSearchType] = useState("제목");
   const num = 6;
-
   const fetchProductBoardList = useCallback(async () => {
     setLoading(true);
 
@@ -31,7 +30,7 @@ const ProductBoardList = () => {
     setPostList(result.productList);
     setProductListTotal(result.productListTotal);
     setLoading(false);
-  }, [page, query, searchType]);
+  }, [page, query]);
 
   const fetchFilteredProductBoardList = (e) => {
     if (e.keyCode === 13) {
@@ -39,17 +38,9 @@ const ProductBoardList = () => {
     }
   };
 
-  //ProductBoardItem에 props로 내려줄 함수
-  const fetchProductLikeCnt = async () => {
-    //상품별 좋아요 갯수 확인
-    const result = (await getProductBoardList(page, num, searchType, query)).data;
-    setPostList(result.productList);
-    setProductListTotal(result.productListTotal);
-  };
-
   useEffect(() => {
     fetchProductBoardList();
-  }, [fetchProductBoardList, page]);
+  }, []);
 
   if (loading)
     return (
@@ -114,11 +105,7 @@ const ProductBoardList = () => {
 
       <Row style={{ marginLeft: 55 }}>
         {postList?.map((postList) => (
-          <ProductBoardItem
-            key={postList.productCode}
-            fetchProductLikeCnt={fetchProductLikeCnt}
-            postList={postList}
-          />
+          <ProductBoardItem key={postList.productCode} postList={postList} />
         ))}
       </Row>
 

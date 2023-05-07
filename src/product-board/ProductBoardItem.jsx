@@ -1,18 +1,15 @@
 import React, { useCallback, useEffect, useState } from "react";
-import { Button, ButtonGroup, Card, Col, Nav } from "react-bootstrap";
-import { useNavigate } from "react-router-dom";
+import { Card, Col } from "react-bootstrap";
 import { useUserStore } from "../model/user.store";
 import {
-  getProductBoardLikeByUser,
-  onClickDislike,
-  onClickLike,
+  getProductBoardLikeByUser
 } from "../util/axios/product.board";
+import LikeButton from "./LikeButton";
 
 /**
  * ProductBoardList의 실제 화면
  */
-const ProductBoardItem = ({ postList, fetchProductLikeCnt }) => {
-  const navigate = useNavigate();
+const ProductBoardItem = ({ postList }) => {
   const {
     productCode,
     productTitle,
@@ -20,38 +17,18 @@ const ProductBoardItem = ({ postList, fetchProductLikeCnt }) => {
     productWriter,
     productImage,
     productViewcnt,
-    productLikeCnt,
   } = postList;
   const [isClickedLike, setIsClickedLike] = useState(false);
   const loginUserNickname = useUserStore((state) => state.loginUserNickname);
 
   const fetchLikeList = useCallback(async () => {
     //상품에 대한 좋아요 클릭 여부 확인
-    const result = await getProductBoardLikeByUser(
-      productCode,
-      loginUserNickname
-    );
+    const result = (
+      await getProductBoardLikeByUser(productCode, loginUserNickname)
+    ).data;
 
-    setIsClickedLike(result.data.likeStatus || false);
+    setIsClickedLike(result.likeStatus || false);
   }, [loginUserNickname, productCode]);
-
-  const onClick = (e) => {
-    e.preventDefault();
-    const href = e.target.getAttribute("href");
-    navigate(href);
-  };
-
-  const handleLikeClick = async () => {
-    const data = {
-      productCode,
-      userNickname: loginUserNickname,
-    };
-
-    !isClickedLike ? await onClickLike(data) : await onClickDislike(data);
-
-    setIsClickedLike(!isClickedLike);
-    fetchProductLikeCnt();
-  };
 
   useEffect(() => {
     fetchLikeList();
@@ -79,38 +56,11 @@ const ProductBoardItem = ({ postList, fetchProductLikeCnt }) => {
               내용: {productContent}
             </Card.Text>
           </Card.Body>
-          <ButtonGroup>
-            <Button
-              className="btn-10"
-              onClick={loginUserNickname && handleLikeClick}
-              variant="primary"
-            >
-              <img
-                src={
-                  isClickedLike
-                    ? "../image/heart.png"
-                    : "../image/emptyheart.png"
-                }
-                width={15}
-                alt="빈 이미지"
-              />
-              &nbsp;&nbsp;{productLikeCnt}
-            </Button>
-
-            <Button style={{ marginLeft: 100 }} variant="secondary">
-              <Nav.Link
-                className="box"
-                onClick={onClick}
-                href={`/productBoard/read/${productCode}`}
-              >
-                자세히보기
-              </Nav.Link>
-            </Button>
-          </ButtonGroup>
+          <LikeButton productCode={productCode} />
         </Card>
       </Col>
     </>
   );
 };
 
-export default ProductBoardItem;
+export default React.memo(ProductBoardItem);
