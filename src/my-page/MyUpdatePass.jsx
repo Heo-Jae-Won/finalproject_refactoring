@@ -53,27 +53,25 @@ const MyUpdatePass = () => {
     }
   };
 
-  const handlePasswordUpdate = (e) => {
+  const handlePasswordUpdate = async (e) => {
     e.preventDefault();
 
-    confirmUpdate().then(async (result) => {
-      if (result.isConfirmed) {
-        const data = {
-          userId,
-          userPass,
-        };
+    const result = await confirmUpdate();
+    if (result.isConfirmed) {
+      const data = {
+        userId,
+        userPass,
+      };
 
-        //비밀번호 수정
-        await updatePassword(data).then(() => {
-          informSuccess();
-          navigate(`/my/info/${loginUserId}`);
-        });
-      }
-      //취소 click.
-      else if (result.isDismissed) {
-        isChecked = false;
-      }
-    });
+      //비밀번호 수정
+      await updatePassword(data);
+      informSuccess();
+      navigate(`/my/info/${loginUserId}`);
+    }
+    //취소 click.
+    else if (result.isDismissed) {
+      isChecked = false;
+    }
   };
 
   return (

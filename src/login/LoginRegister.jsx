@@ -27,7 +27,6 @@ import { requireInput, requireValidationPass } from "../util/swal/requirement";
 import {
   failDuplicationCheckUserId,
   failDuplicationCheckUserNickname,
-  failFileUploadByType,
 } from "../util/swal/service.exception";
 import Address from "./Address";
 import Birth from "./Birth";
@@ -143,46 +142,44 @@ const LoginRegister = () => {
       return;
     }
 
-    confirmInsert().then(async (result) => {
-      if (result.isConfirmed) {
-        //   //인증번호 확인
-        // const result = await authenticateUser(userTel);
+    const isConfirmed = (await confirmInsert()).isConfirmed;
+    if (isConfirmed) {
+      //   //인증번호 확인
+      // const result = await authenticateUser(userTel);
 
-        // const authNumber = prompt("인증번호를 입력하세요.");
+      // const authNumber = prompt("인증번호를 입력하세요.");
 
-        // if (authNumber !== String(result.data)) {
-        //   informFailedAuthentication();
-        //   return;
-        // }
-        const data = {
-          userId,
-          userPass,
-          userName,
-          userNickname,
-          userEmail,
-          userTel,
-          userAddress: address,
-          userStatus,
-          userGender,
-          userBirth: birth,
-        };
+      // if (authNumber !== String(result.data)) {
+      //   informFailedAuthentication();
+      //   return;
+      // }
+      const data = {
+        userId,
+        userPass,
+        userName,
+        userNickname,
+        userEmail,
+        userTel,
+        userAddress: address,
+        userStatus,
+        userGender,
+        userBirth: birth,
+      };
 
-        const formData = new FormData();
-        formData.append("file", file);
-        formData.append(
-          "data",
-          new Blob([JSON.stringify(data)], {
-            type: "application/json",
-          })
-        );
+      const formData = new FormData();
+      formData.append("file", file);
+      formData.append(
+        "data",
+        new Blob([JSON.stringify(data)], {
+          type: "application/json",
+        })
+      );
 
-        //회원가입
-        await saveUser(formData).then(() => {
-          informSuccess();
-          navigate("/login/form");
-        });
-      }
-    });
+      //회원가입
+      await saveUser(formData);
+      informSuccess();
+      navigate("/login/form");
+    }
   };
 
   const handleFileChange = (e) => {
@@ -190,7 +187,10 @@ const LoginRegister = () => {
       ...prev,
       file: e.target.files[0],
     }));
-    setImage(URL.createObjectURL(e.target.files[0]));
+
+    if (typeof e.target.files[0] !== "undefined") {
+      setImage(URL.createObjectURL(e.target.files[0]));
+    }
   };
 
   //주소 받는 API

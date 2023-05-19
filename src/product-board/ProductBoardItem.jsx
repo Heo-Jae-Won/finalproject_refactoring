@@ -1,9 +1,7 @@
 import React, { useCallback, useEffect, useState } from "react";
 import { Card, Col } from "react-bootstrap";
 import { useUserStore } from "../model/user.store";
-import {
-  getProductBoardLikeByUser
-} from "../util/axios/product.board";
+import { getProductBoardLikeByUser } from "../util/axios/product.board";
 import LikeButton from "./LikeButton";
 
 /**

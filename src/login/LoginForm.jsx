@@ -43,19 +43,13 @@ const LoginForm = () => {
 
       //회원 탈퇴 상태
     } else if (result === 2) {
-      confirmRestore().then(async (result) => {
-        if (result.isConfirmed) {
-          navigate(`/login/restore/${userId}`);
-        }
-      });
+      const isConfirmed = (await confirmRestore()).isConfirmed;
+      if (isConfirmed) {
+        navigate(`/login/restore/${userId}`);
+      }
 
       //로그인 성공
     } else {
-      if (typeof fetchLoginUser === "function") {
-        console.log("펑션임 ㅇㅇ");
-      } else {
-        console.log("왜 아님?");
-      }
       fetchLoginUser(userId);
       navigate("/");
     }

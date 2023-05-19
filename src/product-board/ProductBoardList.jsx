@@ -1,5 +1,5 @@
 import { MenuItem, TextField } from "@material-ui/core";
-import React, { useEffect, useState, useCallback, useRef } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { Row, Spinner } from "react-bootstrap";
 import Pagination from "react-js-pagination";
 import { useLocation, useNavigate } from "react-router-dom";
@@ -10,7 +10,7 @@ import ProductBoardItem from "./ProductBoardItem";
 /**
  * 상품 게시판 목록
  */
-const ProductBoardList =  () => {
+const ProductBoardList = () => {
   const location = useLocation();
   const params = new URLSearchParams(location.search);
   let page = parseInt(params.get("page")) || 1;

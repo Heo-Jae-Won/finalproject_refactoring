@@ -80,15 +80,13 @@ const ProductBoardInsert = () => {
       })
     );
 
-    confirmInsert().then(async (result) => {
-      if (result.isConfirmed) {
-        //상품게시판 등록
-        await insertProductBoard(formData).then(() => {
-          informSuccess();
-          navigate("/productBoard/list");
-        });
-      }
-    });
+    const isConfirmed = (await confirmInsert()).isConfirmed;
+    if (isConfirmed) {
+      //상품게시판 등록
+      await insertProductBoard(formData);
+      informSuccess();
+      navigate("/productBoard/list");
+    }
   };
 
   // 새로고침 막기(조건 부여 가능)

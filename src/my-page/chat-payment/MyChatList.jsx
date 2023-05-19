@@ -118,25 +118,23 @@ const MyChatList = () => {
   }, [chatId, db]);
 
   const handleMessageDelete = async (id) => {
-    confirmDelete().then(async (result) => {
-      if (result.isConfirmed) {
-        //삭제
-        await deleteDoc(doc(db, `chatRoom/${chatId}/messageList`, id));
-      }
-    });
+    const isConfirmed = await confirmDelete();
+    if (isConfirmed) {
+      //삭제
+      await deleteDoc(doc(db, `chatRoom/${chatId}/messageList`, id));
+    }
   };
 
-  const handleChatRoomDelete = (id) => {
-    confirmLeave().then(async (result) => {
-      if (result.isConfirmed) {
-        //HACK : setTimeout설정 안하면 채팅방이 중복돼서 다시 만들어지는 것이 눈에 보이게 됨.
-        setTimeout(() => deleteDoc(doc(db, `chatRoom`, id)), 1000);
-        document
-          .getElementsByClassName("list-group-item non-click click")[0]
-          .remove();
-        navigate("/productBoard/list");
-      }
-    });
+  const handleChatRoomDelete = async (id) => {
+    const isConfirmed = await confirmLeave();
+    if (isConfirmed) {
+      //HACK : setTimeout설정 안하면 채팅방이 중복돼서 다시 만들어지는 것이 눈에 보이게 됨.
+      setTimeout(() => deleteDoc(doc(db, `chatRoom`, id)), 1000);
+      document
+        .getElementsByClassName("list-group-item non-click click")[0]
+        .remove();
+      navigate("/productBoard/list");
+    }
   };
 
   useEffect(() => {

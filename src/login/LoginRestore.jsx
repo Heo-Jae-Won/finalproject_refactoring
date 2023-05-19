@@ -13,19 +13,17 @@ const LoginRestore = () => {
   const { userId } = useParams();
   const navigate = useNavigate();
 
-  const handleUserRestore = () => {
-    confirmRestore().then(async (result) => {
-      if (result.isConfirmed) {
-        const formData = new FormData();
-        formData.append("userId", userId);
+  const handleUserRestore = async () => {
+    const isConfirmed = await confirmRestore();
+    if (isConfirmed) {
+      const formData = new FormData();
+      formData.append("userId", userId);
 
-        //회원 복구
-        await restoreUser(formData).then(() => {
-          informSuccess();
-          navigate("/login/form");
-        });
-      }
-    });
+      //회원 복구
+      await restoreUser(formData);
+      informSuccess();
+      navigate("/login/form");
+    }
   };
 
   return (

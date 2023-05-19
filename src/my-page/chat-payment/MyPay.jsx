@@ -98,15 +98,14 @@ const MyPay = () => {
       //결제정보를 db에 저장
       await payProduct(formData);
       //결제후기 쓰러가기
-      confirmWriterReview().then(async (result) => {
-        if (result.isConfirmed) {
-          navigate(
-            `/my/review/insert?seller=${productWriter}&productCode=${productCode}`
-          );
-        } else {
-          navigate("/my/menu");
-        }
-      });
+      const isConfirmed = await confirmWriterReview();
+      if (isConfirmed) {
+        navigate(
+          `/my/review/insert?seller=${productWriter}&productCode=${productCode}`
+        );
+      } else {
+        navigate("/my/menu");
+      }
     } else {
       informFailedPayment(error_msg);
     }

@@ -15,7 +15,7 @@ export const useUserStore = create(
           loginUserProfile: result.loginUserProfile,
         });
       },
-      deleteEverything: () =>
+      resetLoginUser: () =>
         set({
           loginUserId: "",
           loginUserNickname: "",

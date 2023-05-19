@@ -101,52 +101,49 @@ const ProductBoardRead = () => {
     }
   };
 
-  const handleProductBoardUpdate = (e) => {
+  const handleProductBoardUpdate = async (e) => {
     e.preventDefault();
 
-    informSuccess().then(async (result) => {
-      if (result.isConfirmed) {
-        const data = {
-          productCode,
-          productContent,
-          productTitle,
-          productPrice,
-          productWriter,
-          productImage,
-          productName,
-        };
-        const formData = new FormData();
-        formData.append("file", file);
-        formData.append(
-          "data",
-          new Blob([JSON.stringify(data)], {
-            type: "application/json",
-          })
-        );
+    const isConfirmed = await informSuccess();
+    if (isConfirmed) {
+      const data = {
+        productCode,
+        productContent,
+        productTitle,
+        productPrice,
+        productWriter,
+        productImage,
+        productName,
+      };
+      const formData = new FormData();
+      formData.append("file", file);
+      formData.append(
+        "data",
+        new Blob([JSON.stringify(data)], {
+          type: "application/json",
+        })
+      );
 
-        //data 확인
-        const myBlob = formData.get("data");
-        myBlob.text().then((text) => {
-          console.log(text);
-        });
+      // //data 확인
+      // const myBlob = formData.get("data");
+      // myBlob.text().then((text) => {
+      //   console.log(text);
+      // });
 
-        //상품 정보 수정
-        await updateProductBoard(formData);
-      }
-    });
+      //상품 정보 수정
+      await updateProductBoard(formData);
+    }
   };
 
-  const handleProductBoardDelete = (e) => {
+  const handleProductBoardDelete = async (e) => {
     e.preventDefault();
-    confirmDelete().then(async (result) => {
-      if (result.isConfirmed) {
-        //상품 정보 삭제
-        await deleteProductBoard(productCode).then(() => {
-          informSuccess();
-          navigate("/productBoard/list");
-        });
-      }
-    });
+    const isConfirmed = await confirmDelete();
+    if (isConfirmed) {
+      //상품 정보 삭제
+      await deleteProductBoard(productCode);
+      informSuccess();
+      navigate("/productBoard/list");
+    }
   };
 
   const setChatRoomList = async () => {

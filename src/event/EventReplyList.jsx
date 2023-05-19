@@ -6,7 +6,7 @@ import "../Pagination.css";
 import { useUserStore } from "../model/user.store";
 import { deleteReply, getReplyList, insertReply } from "../util/axios/event";
 import { confirmDelete } from "../util/swal/confirmation";
-import { informServerError, informSuccess } from "../util/swal/information";
+import { informSuccess } from "../util/swal/information";
 
 const EventReplyList = ({ eventCode }) => {
   const [eventReplyList, setEventReplyList] = useState([]);
@@ -50,24 +50,21 @@ const EventReplyList = ({ eventCode }) => {
       };
 
       //댓글 등록
-      await insertReply(data).then(() => {
-        setPage(page);
-        fetchEventReplyList();
-        setEventReplyContent("");
-      });
+      await insertReply(data);
+      setPage(page);
+      fetchEventReplyList();
+      setEventReplyContent("");
     }
   };
 
   const handleReplyDelete = async (eventReplyCode) => {
-    confirmDelete().then(async (result) => {
-      if (result.isConfirmed) {
-        //댓글 삭제
-        await deleteReply(eventReplyCode).then(() => {
-          informSuccess();
-          fetchEventReplyList();
-        });
-      }
-    });
+    const isConfirmed = (await confirmDelete()).isConfirmed;
+    if (isConfirmed) {
+      //댓글 삭제
+      await deleteReply(eventReplyCode);
+      informSuccess();
+      fetchEventReplyList();
+    }
   };
 
   const handlePageChange = (e) => {

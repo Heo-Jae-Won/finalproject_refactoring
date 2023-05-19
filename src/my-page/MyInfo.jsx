@@ -66,6 +66,8 @@ const MyInfo = () => {
       ...prev,
       file: e.target.files[0],
     }));
+
+    //files이 설정되지 않아 undefined가 되면 오류가 발생한다. 따라서 예외처리가 필요하다.
     if (typeof e.target.files[0] !== "undefined") {
       const url = URL.createObjectURL(e.target.files[0]);
       setImage(url);
@@ -83,43 +85,39 @@ const MyInfo = () => {
   }, [userId]);
 
   //update myInfo
-  const handleUserInfoUpdate = () => {
+  const handleUserInfoUpdate = async () => {
     if (!checkPhoneNumberValid(userTel) || !checkEmailValid(userEmail)) {
       requireValidationPass();
       return;
     }
 
-    confirmUpdate().then(async (result) => {
-      if (result.isConfirmed) {
-        const data = {
-          userId: userId,
-          userNickname: userNickname,
-          userProfile: userProfile,
-          userAddress: address,
-          userEmail: userEmail,
-          userTel: userTel,
-          file: file,
-        };
+    const isConfirmed = (await confirmUpdate()).isConfirmed;
+    if (isConfirmed) {
+      const data = {
+        userId: userId,
+        userNickname: userNickname,
+        userProfile: userProfile,
+        userAddress: address,
+        userEmail: userEmail,
+        userTel: userTel,
+        file: file,
+      };
 
-        //내 정보 수정
-        await updateUserInfo(data).then(() => {
-          informSuccess();
-        });
-      }
-    });
+      //내 정보 수정
+      await updateUserInfo(data);
+      informSuccess();
+    }
   };
 
-  const handleUserDeactivate = () => {
-    confirmDeactivate().then(async (result) => {
-      if (result.isConfirmed) {
-        //회원 탈퇴
-        await getUserStatus(userId).then(() => {
-          informSuccess();
-          deleteEverything();
-          navigate("/");
-        });
-      }
-    });
+  const handleUserDeactivate = async () => {
+    const isConfirmed = (await confirmDeactivate()).isConfirmed;
+    if (isConfirmed) {
+      //회원 탈퇴
+      await getUserStatus(userId);
+      informSuccess();
+      deleteEverything();
+      navigate("/");
+    }
   };
 
   useEffect(() => {
