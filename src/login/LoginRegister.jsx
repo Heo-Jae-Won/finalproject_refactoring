@@ -76,7 +76,7 @@ const LoginRegister = () => {
 
     //닉네임 중복 확인
     const result = (await checkDuplicationUserNickname(userNickname)).data;
-    result === 1
+    result === 3
       ? informDuplicationUserNicknamePass()
       : failDuplicationCheckUserNickname();
   };
